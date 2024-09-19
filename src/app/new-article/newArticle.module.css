@@ -1,0 +1,20 @@
+
+.tiptap p,
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+    margin: 0;
+}
+.tiptap p {
+    font-size: 10px!important;
+}
+
+.highlightedText {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-bottom: 2px dashed #e15858;
+    border-radius: 0.375rem;
+}
