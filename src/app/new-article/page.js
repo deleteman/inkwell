@@ -13,6 +13,8 @@ import TextStyle from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import styles from './newArticle.module.css'
 
+import { exportToMarkdown, getFeedback, saveArticle } from "../lib/editor-helpers"
+
 import { FiSave, FiEye, FiDownload } from 'react-icons/fi'
 import { Toaster, toast } from 'react-hot-toast'
 import { Editor } from "../components/Editor"
@@ -36,40 +38,7 @@ const CustomHighlight = Highlight.extend({
 })
 
 
-function getCategoryColor(category) {
-  switch (category) {
-    case 're-write with the new proposed text': {
-      return 'bg-yellow-100'
-    }
-    case 'can be improved with suggestion':  {
-      return 'bg-green-100'
-    }
-    case 'wrong-theme': {
-      return 'bg-red-100'
-    }
-    case 'too-cliche': {
-      return 'bg-orange-100'
-    }
-    case 'personal-opinion': {
-      return 'bg-blue-100'
-    }
-    case 'informal-language': {
-      return 'bg-purple-100'
-    }
-    case 'uncertain-language': {
-      return 'bg-gray-100'
-    }
-    case 'too-formal': {    
-      return 'bg-pink-100'
-    }
-    case 'too-marketing-oriented': {
-      return 'bg-indigo-100'
-    }
-    case 'incorrect-structure': {
-      return 'bg-red-100'
-    }
-  }
-}
+
 
 export default function EditArticle({ params }) {
   const { data: session, status } = useSession()
@@ -128,91 +97,10 @@ export default function EditArticle({ params }) {
     }
   }, [ editor])
 
-  const getFeedback = async () => {
-    const content = editor.getText()
-    toast.loading('Fetching feedback...')
-    const res = await fetch("/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, genre, type, additionalContext }),
-    })
-    const data = await res.json()
-    toast.dismiss()
-    if(data.feedback.error !== undefined) {
-        console.log("Nothing to do for now...")
-        toast('No feedback at the moment.')
-        return
-    }
-    setFeedback(data.feedback)
-    highlightText(data.feedback)
-    toast.success('Feedback updated!')
-  }
-
-  // Highlight the text in the editor based on feedback
-  const highlightText = (feedback) => {
-    let fullContent = editor.getHTML()
-    feedback.forEach(({ originalText, category }, idx) => {
-      if (category === "wrong-theme") return
   
-      const color = getCategoryColor(category)
-      
-      // Escape special regex characters in originalText
-      let escapedText = originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      
-      // Replace all quotes in escapedText with a regex pattern that matches either single or double quotes
-      escapedText = escapedText.replace(/['"]/g, '["\']')
-      
-      // Create a regex with the 'g' flag for global matching
-      const regex = new RegExp(escapedText, 'g')
-  
-      // Use a replacement function to maintain the original matched text's quotes
-      fullContent = fullContent.replace(regex, (matchedText) => {
-        return `<mark class="${styles.highlightedText} ${color}" id="highlight_${idx}" data-id="highlight_${idx}">${matchedText}</mark>`
-      })
-    })
-    editor.commands.setContent(fullContent)
-  }
 
-  const saveArticle = async () => {
-    if(!articleID) { // the article is new
-        const res = await fetch(`/api/articles`, {
-            method: "POST",
-            headers: { "Content-Type": 'application/json' },
-            body: JSON.stringify({ title, content: editor?.getHTML(), prefs: { genre, type, additionalContext } }),
-        })
-        if (res.ok) {
-            let data = await res.json()
-            setArticleID(data._id)   
-        // Display success notification
-            toast.success('Article saved successfully!')
-        } else {
-            console.error('Failed to save article')
-            toast.error('Failed to save article')
-        }
-    } else { // the article is existing
-        const res = await fetch(`/api/articles/${articleID}`, {
-            method: "PUT",
-            headers: { "Content-Type": 'application/json' },
-            body: JSON.stringify({ title, content: editor?.getHTML(), prefs: { genre, type, additionalContext } }), 
-        })
-        if (res.ok) {
-        // Display success notification
-            toast.success('Article updated successfully!')
-        } else {
-            console.error('Failed to updatearticle')
-            toast.error('Failed to update article')
-        }
-    }
-  }
 
-  const exportToMarkdown = () => {
-    const markdownContent = editor.getText()
-    // For simplicity, you can copy the markdown content to clipboard or download as a file
-    navigator.clipboard.writeText(markdownContent)
-    toast('Content copied to clipboard as Markdown')
-  }
-
-  if (status === "loading" || loading) {
+   if (status === "loading" || loading) {
     return <div className="flex items-center justify-center min-h-screen">
       <div className="text-gray-600">Loading...</div>
     </div>
@@ -228,13 +116,13 @@ export default function EditArticle({ params }) {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">New writing</h1>
           <div className="flex items-center space-x-4">
-            <button onClick={saveArticle} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300 flex items-center">
+            <button onClick={() => saveArticle(editor, title, genre, type, additionalContext, toast, articleID, setArticleID)} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300 flex items-center">
               <FiSave className="mr-2" /> Save
             </button>
-            <button onClick={exportToMarkdown} className="bg-gray-200 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-300 transition duration-300 flex items-center">
+            <button onClick={() => exportToMarkdown(editor, toast)} className="bg-gray-200 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-300 transition duration-300 flex items-center">
               <FiDownload className="mr-2" /> Export
             </button>
-            <button onClick={getFeedback} className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300 flex items-center">
+            <button onClick={() => getFeedback(editor, title, genre, type, additionalContext,  setFeedback, toast, styles)} className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300 flex items-center">
               <FiEye className="mr-2" /> Review
             </button>
           </div>

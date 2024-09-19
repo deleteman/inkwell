@@ -148,7 +148,7 @@ function bookChapterPrompt(genre, additionalContext) {
 function genericPrompt() {
     return  `
     if there are no problems, then:
-    - For each suggestion, include the original text, the category, and the suggestion. Use this JSON format:
+    - For each suggestion, include the original text (without affecting its capitalization), the category, and the suggestion. Use this JSON format:
             
             [
             {

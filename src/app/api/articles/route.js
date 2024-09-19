@@ -2,13 +2,16 @@
 
 import { NextResponse } from 'next/server'
 import clientPromise from '../../lib/mongodb'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
 import { ObjectId } from 'mongodb'
 
 export async function GET() {
+  const session = await getServerSession(authOptions)
   try {
     const client = await clientPromise
     const db = client.db()
-    const articles = await db.collection('articles').find({}).toArray()
+    const articles = await db.collection('articles').find({userId: session?.user?.id}).toArray()
     return NextResponse.json(articles)
   } catch (error) {
     console.error('GET All Error:', error)
@@ -17,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST(request) {
+  const session = await getServerSession(authOptions)
+
   try {
     const client = await clientPromise
     const db = client.db()
@@ -25,6 +30,7 @@ export async function POST(request) {
       title,
       content,
       prefs,
+      userId: session?.user?.id,
       createdAt: new Date(),
     })
 

@@ -1,3 +1,4 @@
+import { _iterSSEMessages } from 'openai/streaming';
 import { FaEdit, FaLightbulb, FaPalette, 
         FaExclamationTriangle, FaUser, FaCommentDots, 
         FaQuestionCircle, FaBriefcase, FaBullhorn,
@@ -44,6 +45,25 @@ function highlightFeedback(idx, action="highlight") {
       'too-marketing-oriented': "Too Marketing-oriented",   
       'too-formal': "Too Formal",
       'incorrect-structure': "Incorrect Structure",
+    }
+
+    if(item.error) {    
+      return (
+        <div
+          key={index}
+          className="p-2 border-b cursor-pointer"
+          id={`suggestion_${index}`}
+        >
+          <div className="flex items-center mb-1">
+            <FaExclamationTriangle className="text-red-500 inline-block mr-2" />
+            <strong className="text-red-600">Error:</strong>
+          </div>
+          <p className="text-red-800">{item.error}</p>
+          {item.originalText && (
+            <em className="text-gray-500 block mt-1">"{item.originalText}"</em>
+          )}
+        </div>
+      )
     }
   
     return (

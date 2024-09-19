@@ -60,7 +60,7 @@ export default function LandingPage({ signIn }) {
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-gray-700 hover:text-blue-600">
+                <a href="/subscribe" className="text-gray-700 hover:text-blue-600">
                   Pricing
                 </a>
               </li>
@@ -89,9 +89,21 @@ export default function LandingPage({ signIn }) {
         {/* Features Section */}
         <section id="features" className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h3 className="text-3xl font-bold text-center mb-12">Why Choose InkwellAI?</h3>
+            <h3 className="text-4xl font-bold text-center mb-12">Why Choose InkwellAI?</h3>
             <div className="flex flex-wrap -mx-4">
-              <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+              <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                  <div className="text-5xl text-orange-600 mb-4">
+                    <FaCheckCircle />
+                  </div>
+                  <h4 className="text-xl font-semibold mb-2">Empower Your Voice—We Enhance, You Create</h4>
+                  <p className="text-gray-700">
+                  Don't settle for AI tools that generate content for you. Our platform empowers you to write 
+                  authentically, providing expert guidance that refines your work without overshadowing your creativity. 
+                  </p>
+                </div>
+              </div>
+              <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
                 <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                   <div className="text-5xl text-blue-600 mb-4">
                     <FaCheckCircle />
@@ -103,7 +115,7 @@ export default function LandingPage({ signIn }) {
                   </p>
                 </div>
               </div>
-              <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+              <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
                 <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                   <div className="text-5xl text-green-500 mb-4">
                     <FaCheckCircle />
@@ -115,7 +127,7 @@ export default function LandingPage({ signIn }) {
                   </p>
                 </div>
               </div>
-              <div className="w-full md:w-1/3 px-4">
+              <div className="w-full md:w-1/4 px-4">
                 <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                   <div className="text-5xl text-purple-600 mb-4">
                     <FaCheckCircle />
