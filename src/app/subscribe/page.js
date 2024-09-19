@@ -2,26 +2,11 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]/route'
 import Link from 'next/link'
 import { FiCheckCircle } from 'react-icons/fi'
-import { getOrCreateCustomer } from '../lib/stripe'
 
 export default async function Subscribe() {
     // Get the session on the server side
     const session = await getServerSession(authOptions)
   
-    if (!session || !session.user) {
-      // Redirect to sign-in page if not authenticated
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <p>You must be signed in to view this page.</p>
-          <Link href="/api/auth/signin">
-            <a className="text-blue-600 underline">Sign In</a>
-          </Link>
-        </div>
-      )
-    }
-  
-    // Fetch the customerId server-side
-    const customerId = await getOrCreateCustomer(session.user.email, session.user.name)
   
     // Now render the component with the fetched customerId
     return (
@@ -32,11 +17,22 @@ export default async function Subscribe() {
             <h1 className="text-3xl font-bold text-blue-600">
               Inkwell<span className="text-green-500">AI</span>
             </h1>
+            {session && (
             <Link href="/dashboard">
               <span className="text-blue-600 hover:underline cursor-pointer">
                 Back to Dashboard
               </span>
             </Link>
+
+            )}
+            {!session && (
+            <Link href="/">
+              <span className="text-blue-600 hover:underline cursor-pointer">
+                Back to home
+              </span>
+            </Link>
+            )}
+
           </div>
         </header>
   
@@ -70,7 +66,7 @@ export default async function Subscribe() {
             <stripe-pricing-table
               pricing-table-id="prctbl_1Q0KexLFm9hjuSSj7YgtZBNE"
               publishable-key="pk_test_51Q0KMyLFm9hjuSSjvLrYAtcS9mgaLtCkVGDcZCsR05GxRvp9HLzjxnu1CuLMZgfnfnOrD3j2D6wKWFxgUYxBnX5H00ShSzIk6t"
-              customer-email={session.user.email}
+              customer-email={session?.user?.email}
             ></stripe-pricing-table>
   
             {/* Subscribe Button */}

@@ -26,7 +26,7 @@ export default function LandingPage({ signIn }) {
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-gray-700 hover:text-blue-600">
+                <a href="/subscribe" className="text-gray-700 hover:text-blue-600">
                   Pricing
                 </a>
               </li>
