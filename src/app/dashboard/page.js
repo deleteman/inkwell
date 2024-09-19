@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Toaster, toast } from 'react-hot-toast'
 import { FiTrash2, FiEdit } from 'react-icons/fi'
 import { DEFAULT_ROLE } from "../lib/constants"
+import { ArticleCard } from "../components/ArticleCard"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -87,18 +88,8 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map(article => (
-              <div key={article._id} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">{article.title}</h3>
-                <p className="text-gray-600 mb-4">{article.excerpt || "No preview available."}</p>
-                <div className="flex justify-between items-center">
-                  <Link href={`/edit-article/${article._id}`} className="text-blue-600 hover:text-blue-800 flex items-center">
-                      <FiEdit className="mr-1" /> Edit
-                  </Link>
-                  <button onClick={() => deleteArticle(article._id)} className="text-red-600 hover:text-red-800 flex items-center">
-                    <FiTrash2 className="mr-1" /> Delete
-                  </button>
-                </div>
-              </div>
+                <ArticleCard article={article} key={article._id} onDelete={deleteArticle} />
+              
             ))}
           </div>
         )}

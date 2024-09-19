@@ -24,10 +24,10 @@ export async function PUT(request, { params }) {
   try {
     const client = await clientPromise
     const db = client.db()
-    const { title, content } = await request.json()
+    const { title, content, prefs } = await request.json()
     const result = await db.collection('articles').findOneAndUpdate(
       { _id: new ObjectId(params.id) },
-      { $set: { title, content } },
+      { $set: { title, content, prefs } },
       { returnDocument: 'after' }
     )
 

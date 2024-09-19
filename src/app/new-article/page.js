@@ -47,7 +47,7 @@ function getCategoryColor(category) {
     case 'wrong-theme': {
       return 'bg-red-100'
     }
-    case 'too cliché': {
+    case 'too-cliche': {
       return 'bg-orange-100'
     }
     case 'personal-opinion': {
@@ -59,6 +59,15 @@ function getCategoryColor(category) {
     case 'uncertain-language': {
       return 'bg-gray-100'
     }
+    case 'too-formal': {    
+      return 'bg-pink-100'
+    }
+    case 'too-marketing-oriented': {
+      return 'bg-indigo-100'
+    }
+    case 'incorrect-structure': {
+      return 'bg-red-100'
+    }
   }
 }
 
@@ -68,6 +77,7 @@ export default function EditArticle({ params }) {
   const [title, setTitle] = useState("")
   const [feedback, setFeedback] = useState([])
   const [loading, setLoading] = useState(true)
+  const [articleID, setArticleID] = useState(null)
 
   const [genre, setGenre] = useState('')
   const [type, setType] = useState('')
@@ -164,17 +174,34 @@ export default function EditArticle({ params }) {
   }
 
   const saveArticle = async () => {
-    const res = await fetch(`/api/articles`, {
-      method: "POST",
-      headers: { "Content-Type": 'application/json' },
-      body: JSON.stringify({ title, content: editor?.getHTML() })
-    })
-    if (res.ok) {
-      // Display success notification
-      toast.success('Article saved successfully!')
-    } else {
-      console.error('Failed to save article')
-      toast.error('Failed to save article')
+    if(!articleID) { // the article is new
+        const res = await fetch(`/api/articles`, {
+            method: "POST",
+            headers: { "Content-Type": 'application/json' },
+            body: JSON.stringify({ title, content: editor?.getHTML(), prefs: { genre, type, additionalContext } }),
+        })
+        if (res.ok) {
+            let data = await res.json()
+            setArticleID(data._id)   
+        // Display success notification
+            toast.success('Article saved successfully!')
+        } else {
+            console.error('Failed to save article')
+            toast.error('Failed to save article')
+        }
+    } else { // the article is existing
+        const res = await fetch(`/api/articles/${articleID}`, {
+            method: "PUT",
+            headers: { "Content-Type": 'application/json' },
+            body: JSON.stringify({ title, content: editor?.getHTML(), prefs: { genre, type, additionalContext } }), 
+        })
+        if (res.ok) {
+        // Display success notification
+            toast.success('Article updated successfully!')
+        } else {
+            console.error('Failed to updatearticle')
+            toast.error('Failed to update article')
+        }
     }
   }
 
@@ -228,7 +255,7 @@ export default function EditArticle({ params }) {
         <div className="flex flex-col lg:flex-row gap-6">
         {session?.user && session.user.role === PRO_ROLE && (
         <div className="mb-4">
-          <label className="block mb-2">Genre:</label>
+          <label className="block mb-2">Genre/Main topic:</label>
           <select
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
@@ -240,6 +267,9 @@ export default function EditArticle({ params }) {
             <option value="technical">Technical</option>
             <option value="dystopia">Dystopia</option>
             <option value="comedy">Comedy</option>
+            <option value="marketing">Marketing</option>
+            <option value="travel">Travel</option>
+            <option value="food">Food</option>
             {/* Add more genres as needed */}
           </select>
 

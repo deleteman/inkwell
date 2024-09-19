@@ -20,10 +20,11 @@ export async function POST(request) {
   try {
     const client = await clientPromise
     const db = client.db()
-    const { title, content } = await request.json()
+    const { title, content, prefs } = await request.json()
     const result = await db.collection('articles').insertOne({
       title,
       content,
+      prefs,
       createdAt: new Date(),
     })
 

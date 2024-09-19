@@ -133,7 +133,7 @@ export default function EditArticle({ params }) {
                     category === 'can be improved with suggestion' ? 'blue' :
                     'red'
 
-      const regex = new RegExp(originalText, 'g')
+      const regex = new RegExp(originalText, 'gi')
       fullContent = fullContent.replace(regex,`<mark style="background-color: ${color}" id="highlight_${idx}" data-id="highlight_${idx}">${originalText}</mark>`)
     })
     editor.commands.setContent(fullContent)
