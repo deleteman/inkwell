@@ -17,6 +17,7 @@ import { FiSave, FiEye, FiDownload } from 'react-icons/fi'
 import { Toaster, toast } from 'react-hot-toast'
 import { Editor } from "../components/Editor"
 import { FeedbackCard } from "../components/FeedbackCard"
+import { PRO_ROLE } from "../lib/constants"
 
 const CustomHighlight = Highlight.extend({
   addAttributes() {
@@ -225,7 +226,7 @@ export default function EditArticle({ params }) {
 
       
         <div className="flex flex-col lg:flex-row gap-6">
-        {session.user.role === 'pro' && (
+        {session?.user && session.user.role === PRO_ROLE && (
         <div className="mb-4">
           <label className="block mb-2">Genre:</label>
           <select
