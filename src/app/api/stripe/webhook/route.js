@@ -3,11 +3,7 @@ import Stripe from 'stripe'
 import clientPromise from '../../../lib/mongodb'
 import { DEFAULT_ROLE, PRO_ROLE } from '@/app/lib/constants'
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+export const maxDuration = 60
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 

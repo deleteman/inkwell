@@ -5,6 +5,8 @@ import { getSystemPrompt } from '../../lib/prompting'
 
 const openai = new OpenAI()
 
+export const maxDuration = 60
+
 export async function POST(req) {
   const { content, genre, type, additionalContext } = await req.json()
   const session = await getServerSession(authOptions)
