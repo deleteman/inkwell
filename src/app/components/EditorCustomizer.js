@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react'
 import { EditorContext } from './EditorContext' // Adjust the import path
 import { ProAd } from './ProAd'
 import { PRO_ROLE } from '../lib/constants'
-import { ProAd } from './ProAd'
 
 export function EditorCustomizer() {
     const [isExpanded, setIsExpanded] = useState(true)
