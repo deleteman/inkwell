@@ -4,24 +4,30 @@ import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { toast } from 'react-hot-toast'
 
 export default function Success() {
   const router = useRouter()
   const { data: session, status, update } = useSession()
-
- 
   const hasUpdatedSession = useRef(false)
 
   useEffect(() => {
     if (!hasUpdatedSession.current && status === 'authenticated') {
       hasUpdatedSession.current = true
+
       const updateSession = async () => {
-        await update()
+        try {
+          await update() // Force session update
+          toast.success("Session updated with new subscription details.")
+        } catch (error) {
+          console.error("Session update failed:", error)
+          toast.error("Failed to update session. Please try re-logging.")
+        }
       }
+
       updateSession()
     }
   }, [status, update])
-
 
   if (status === 'loading') {
     return <div>Loading...</div>
