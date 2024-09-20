@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Toaster, toast } from 'react-hot-toast'
-import { DEFAULT_ROLE } from "../lib/constants"
+import { DEFAULT_ROLE, PRO_ROLE } from "../lib/constants"
 import { ArticleCard } from "../components/ArticleCard"
 
 export default function Dashboard() {
@@ -66,7 +66,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {session && session.user.role === DEFAULT_ROLE && (
+      {session && session.user.role != PRO_ROLE && (
             <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
                 <p className="font-bold">Unlock More Features!</p>
                 <p>
