@@ -6,6 +6,11 @@ import Navbar from './components/NavBar' // Import the Navbar component
 
 const inter = Inter({ subsets: ['latin'] })
 
+export const metadata = {
+  title: 'InkwellAI- Enhance your writing with our AI suggestions',
+  description: 'Use fine-tuned models to evaluate your writing and get customized recommendations',
+}
+
 export default async function RootLayout({
   children,
 }) {

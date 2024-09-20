@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Toaster, toast } from 'react-hot-toast'
-import { FiTrash2, FiEdit } from 'react-icons/fi'
 import { DEFAULT_ROLE } from "../lib/constants"
 import { ArticleCard } from "../components/ArticleCard"
 
@@ -13,6 +12,7 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -24,9 +24,11 @@ export default function Dashboard() {
     // Fetch articles from API
     // This is a placeholder, you'll need to implement the actual API
     const fetchArticles = async () => {
+        setLoading(true)
       const res = await fetch("/api/articles")
       const data = await res.json()
       setArticles(data)
+        setLoading(false)
     }
     fetchArticles()
   }, [])
@@ -76,6 +78,14 @@ export default function Dashboard() {
             </div>
             )}
       {/* Main Content */}
+      {loading && (
+        <main className="container mx-auto px-4 py-8">
+            <div className="bg-white p-6 rounded-lg shadow text-center">
+                <p className="text-gray-700 mb-4">Loading your writing...</p>
+            </div>
+        </main>
+        )}
+      {!loading && (
       <main className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-semibold mb-6">Your Writing</h2>
         {articles.length === 0 ? (
@@ -94,6 +104,7 @@ export default function Dashboard() {
           </div>
         )}
       </main>
+        )}
     </div>
   )
 }

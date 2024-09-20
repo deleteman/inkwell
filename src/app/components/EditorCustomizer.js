@@ -1,14 +1,17 @@
-import { useSession } from "next-auth/react"
-import { PRO_ROLE } from "../lib/constants"
-import { useContext } from "react"
-import { EditorContext } from "./EditorContext"
+'use client'
 
+import React, { useContext, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { EditorContext } from './EditorContext' // Adjust the import path
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi'
+import Link from 'next/link'
+import { PRO_ROLE } from '../lib/constants'
 
+export function EditorCustomizer() {
+    const [isExpanded, setIsExpanded] = useState(true)
+  const { data: session } = useSession()
 
-export function EditorCustomizer({}) {
-    const { data: session } = useSession()
-
-    const {
+  const {
         genre,
         setGenre,
         type,
@@ -20,6 +23,18 @@ export function EditorCustomizer({}) {
 
     return (
         <> 
+        <h2 className='font-bold'>Customize Your AI Editor</h2>
+        {session?.user && session.user.role != PRO_ROLE && (
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+                <p className="font-bold">Unlock More Features!</p>
+                <p>
+                Upgrade to Pro to customize your AI editor and receive tailored feedback.
+                <Link href="/subscribe" className="text-blue-600 underline ml-2">
+                    Upgrade Now
+                </Link>
+                </p>
+            </div>
+        )}
         {session?.user && session.user.role === PRO_ROLE && (
             <div className="mb-4">
             <label className="block mb-2">Genre/Main topic:</label>
