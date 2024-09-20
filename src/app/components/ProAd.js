@@ -5,7 +5,7 @@ import Link from "next/link"
 
 
 export function ProAd() {
-    const { data: session, update } = useSession( { required: true } )
+    const { data: session, update } = useSession( { required: true, staleTime: 0 } )
 
     useEffect(() => { //updtes the session every 60 seconds
         const interval = setInterval(async () => {
