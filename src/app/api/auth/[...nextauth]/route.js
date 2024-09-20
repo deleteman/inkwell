@@ -32,11 +32,25 @@ export const authOptions = {
   },
   
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = user.role || DEFAULT_ROLE
-      }
+    async jwt({ token, user, trigger }) {
+        if(trigger == "update") { //re-load the user from the db based on the email and updates the user in the token
+          const client = await clientPromise
+          const db = client.db()
+          const dbUser = await db.collection('users').findOne({ email: token.email })
+          if (dbUser) {
+            token.id = dbUser._id
+            token.role = dbUser.role
+          } else {
+              console.log("Error while loading data from DB for user: ", token.email)
+              token.role = DEFAULT_ROLE
+          }
+        } else {
+            if (user) {
+                token.id = user.id
+                token.role = user.role || DEFAULT_ROLE
+            }
+        }
+
       return token  
     },
     async session({ session, token}) {
