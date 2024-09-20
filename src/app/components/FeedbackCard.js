@@ -2,7 +2,9 @@ import { _iterSSEMessages } from 'openai/streaming';
 import { FaEdit, FaLightbulb, FaPalette, 
         FaExclamationTriangle, FaUser, FaCommentDots, 
         FaQuestionCircle, FaBriefcase, FaBullhorn,
-        FaSitemap, FaMeh, FaEye, FaSyncAlt} from 'react-icons/fa'
+        FaSitemap, FaMeh, FaEye, FaSyncAlt,
+        FaFileAlt, FaUserSecret, FaPauseCircle } from 'react-icons/fa'
+
 
 function highlightFeedback(idx, action="highlight") {
     if(action == "highlight") {
@@ -35,7 +37,10 @@ function highlightFeedback(idx, action="highlight") {
       "show-dont-tell": <FaEye className="text-blue-500 inline-block mr-2" />,
       "flat-character": <FaMeh className="text-gray-600 inline-block mr-2" />,
       "obvious-plot-twist": <FaSyncAlt className="text-orange-600 inline-block mr-2" />,
-
+      'poor-intro': <FaFileAlt className="text-red-500 inline-block mr-2" />,
+      'misleading-intro':  <FaUserSecret className="text-yellow-600 inline-block mr-2" />,
+      'missing-cta': <FaBullhorn className="text-green-500 inline-block mr-2" />, 
+      'passive-voice': <FaPauseCircle className="text-blue-700 inline-block mr-2" />,
 
     }
 
@@ -53,7 +58,10 @@ function highlightFeedback(idx, action="highlight") {
       "show-dont-tell": "Show don't tell",
       "flat-character": "Flat character",
       "obvious-plot-twist": "Too obvious",
-
+      'poor-intro': "Poor intro",
+      'misleading-intro': "Misleading intro",
+      'missing-cta': "Missing CTA",
+      'passive-voice': "Passive voice",
 
     }
 
