@@ -1,5 +1,7 @@
 import { useSession } from "next-auth/react"
 import { useEffect } from "react"
+import { PRO_ROLE } from "../lib/constants"
+import Link from "next/link"
 
 
 export function ProAd() {
