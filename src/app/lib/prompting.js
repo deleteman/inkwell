@@ -1,4 +1,8 @@
 import { PRO_ROLE } from "./constants"
+import { bookChapterPrompt } from "./assistants/book-editor"
+import { articlePrompt } from "./assistants/article-writer"
+import { newsletterPrompt } from "./assistants/newsletter-author"
+import { shortStoryPrompt } from "./assistants/short-story-writer"
 
 function themeGuard(genre) {
     return `If the theme of the text doesn't align with the ${genre} genre, then return the following response:
@@ -75,22 +79,7 @@ function comedyPrompt(genre, additionalContext) {
 }
 
 
-function newsletterPrompt(genre, additionalContext) {
-  return `You're an experienced influencer with a very successful newsletter.
-    Through your writing, you've achieved an incredible open rate, and engagemente rate.
-    You're an expert on the ${genre} genre.
-    Analyze the provided text and give suggestions in the following areas:
-        - Identify specific segments of text that need improvement.
-        - Provide feedback in one of the following categories: ${feedbackCategories()}, "too-formal", "too-marketing-oriented"
 
-            Keep in mind that the suggestions should be of high quality and 
-            the following is a brief about the 
-            key points or objectives of the newsletter issue:
-
-            ${additionalContext}
-            Make sure your suggestions take that into account.
-    `
-}
 
 const GenrePromptMapping = {
     "scifi": scifiPrompt,
@@ -105,44 +94,15 @@ const TypePromptMapping = {
     "book-chapter": bookChapterPrompt,
     "article": articlePrompt,
     "newsletter": newsletterPrompt,
+    "short-story": shortStoryPrompt,
 }
 
-function feedbackCategories() {
-    return `"re-write with the new proposed text", "can be improved with suggestion", "wrong-theme", or "too-cliche"`
-}
 
-function articlePrompt(genre, additionalContext) {
-    return `You're an experienced article writer with years of experience in the publishing industry.
-    You've written many viral posts on the ${genre} genre.
-    Analyze the provided text and give suggestions in the following areas:
-        - Identify specific segments of text that need improvement.
-        - Provide feedback in one of the following categories: ${feedbackCategories()}, "personal-opinion", "informal-language", "uncertain-language" 
 
-            Keep in mind that the suggestions should be of high quality and 
-            the following is a brief about the 
-            key points or objectives of the article:
 
-            ${additionalContext}
-            Make sure your suggestions take that into account.
-    `
-}
 
-function bookChapterPrompt(genre, additionalContext) {  
 
-    return `You're a successful book editor with years of experience in the publishing industry.
-            You specialized in the ${genre} genre.
-            Analyze the provided text and give suggestions in the following format:
-            - Identify specific segments of text that need improvement.
-            - Provide feedback in one of the following categories: ${feedbackCategories()}, "incorrect-structure"
-
-            Keep in mind that the suggestions should be of high quality and the following is a brief about the 
-            story of the book:
-
-            ${additionalContext}
-            Make sure your suggestions take that into account.
-
-`
-}   
+   
 
 
 function genericPrompt() {

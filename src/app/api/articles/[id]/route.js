@@ -25,9 +25,14 @@ export async function PUT(request, { params }) {
     const client = await clientPromise
     const db = client.db()
     const { title, content, prefs } = await request.json()
+
+    // Remove all <mark> tags from the content
+    const sanitizedContent = content.replace(/<\/?mark[^>]*>/g, '')
+  
+
     const result = await db.collection('articles').findOneAndUpdate(
       { _id: new ObjectId(params.id) },
-      { $set: { title, content, prefs } },
+      { $set: { title, content: sanitizedContent, prefs } },
       { returnDocument: 'after' }
     )
 

@@ -2,7 +2,7 @@ import { _iterSSEMessages } from 'openai/streaming';
 import { FaEdit, FaLightbulb, FaPalette, 
         FaExclamationTriangle, FaUser, FaCommentDots, 
         FaQuestionCircle, FaBriefcase, FaBullhorn,
-        FaSitemap} from 'react-icons/fa'
+        FaSitemap, FaMeh, FaEye, FaSyncAlt} from 'react-icons/fa'
 
 function highlightFeedback(idx, action="highlight") {
     if(action == "highlight") {
@@ -32,6 +32,11 @@ function highlightFeedback(idx, action="highlight") {
       'too-formal': <FaBriefcase className="text-indigo-500 inline-block mr-2" />,
       'too-marketing-oriented': <FaBullhorn className="text-pink-500 inline-block mr-2" />,
       'incorrect-structure':  <FaSitemap className="text-teal-500 inline-block mr-2" />,
+      "show-dont-tell": <FaEye className="text-blue-500 inline-block mr-2" />,
+      "flat-character": <FaMeh className="text-gray-600 inline-block mr-2" />,
+      "obvious-plot-twist": <FaSyncAlt className="text-orange-600 inline-block mr-2" />,
+
+
     }
 
     const categoryNames= {
@@ -45,6 +50,11 @@ function highlightFeedback(idx, action="highlight") {
       'too-marketing-oriented': "Too Marketing-oriented",   
       'too-formal': "Too Formal",
       'incorrect-structure': "Incorrect Structure",
+      "show-dont-tell": "Show don't tell",
+      "flat-character": "Flat character",
+      "obvious-plot-twist": "Too obvious",
+
+
     }
 
     if(item.error) {    
