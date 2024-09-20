@@ -34,6 +34,7 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user, trigger }) {
         if(trigger == "update") { //re-load the user from the db based on the email and updates the user in the token
+            console.log("Updating token from the database")
           const client = await clientPromise
           const db = client.db()
           const dbUser = await db.collection('users').findOne({ email: token.email })

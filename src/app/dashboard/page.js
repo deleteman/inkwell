@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Toaster, toast } from 'react-hot-toast'
 import { DEFAULT_ROLE, PRO_ROLE } from "../lib/constants"
 import { ArticleCard } from "../components/ArticleCard"
+import { ProAd } from "../components/ProAd"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -65,18 +66,7 @@ export default function Dashboard() {
           </Link>
         </div>
       </header>
-
-      {session && session.user.role != PRO_ROLE && (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
-                <p className="font-bold">Unlock More Features!</p>
-                <p>
-                Upgrade to Pro to customize your AI editor and receive tailored feedback.
-                <Link href="/subscribe" className="text-blue-600 underline ml-2">
-                    Upgrade Now
-                </Link>
-                </p>
-            </div>
-            )}
+      <ProAd />              
       {/* Main Content */}
       {loading && (
         <main className="container mx-auto px-4 py-8">
