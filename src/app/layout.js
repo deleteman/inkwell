@@ -45,6 +45,7 @@ export default async function RootLayout({
             <p>&copy; {new Date().getFullYear()} InkwellAI. All rights reserved.</p>
           </footer>
         </SessionProvider>
+        <script defer event-uuid="fd3983df-20de-4679-969f-1f55330de7d4" src="https://tracker.metricswave.com/js/visits.js"></script>
       </body>
     </html>
   )
