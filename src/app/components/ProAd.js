@@ -8,22 +8,27 @@ export function ProAd() {
   const [isSessionUpdated, setIsSessionUpdated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
+  /*
   useEffect(() => {
     const updateSession = async () => {
       if (session && session.user && session.user.role !== PRO_ROLE) {
         console.log("Updating session")
-        await update()
         setIsSessionUpdated(true)
+        await update()
       }
       setIsLoading(false)
     }
 
-    if (!isSessionUpdated) {
+    */
+  /*  if (!isSessionUpdated) {
       updateSession()
+    } else {
+        setTimeout(() => setIsSessionUpdated(false), 1000)
+        return;
     }
 
     // Updates the session every 60 seconds
-    const interval = setInterval(async () => {
+    /*const interval = setInterval(async () => {
       if (session && session.user && session.user.role !== PRO_ROLE) {
         console.log("Updating session inside hte interval")
         await update()
@@ -31,11 +36,22 @@ export function ProAd() {
     }, 60 * 1000)
 
     return () => clearInterval(interval)
-  }, [session, update, isSessionUpdated])
+    */
+   /*
+   console.log("the component is updated")
+   if(!isSessionUpdated) {
+       updateSession()
+   } else {
+       console.log("Session already updated")
+   }
+  }, [isSessionUpdated])
+  */
 
-  if (isLoading) {
+
+  /*if (isLoading) {
     return <div>Loading...</div>
   }
+  */
 
   return (
     <>
