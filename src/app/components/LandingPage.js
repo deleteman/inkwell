@@ -1,9 +1,39 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaGoogle, FaCheckCircle, FaQuoteLeft } from 'react-icons/fa';
+import { Editor } from './Editor';
+import { EditorComponent } from './EditorComponent';
+import { ProAd } from './ProAd';
 
 export default function LandingPage({ signIn }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [reviewAttempted, setReviewAttempted] = useState(false);
+  const [stateLoaded, setStateLoaded] = useState(false);
+
+  useEffect(() => {
+    console.log("Loading the value of reviewAttempted")
+    const storedValue = localStorage ? localStorage.getItem('reviewAttempted') : 'false';
+    console.log(storedValue)
+    setReviewAttempted(storedValue === 'true')
+    setStateLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    console.log("updating the value of reviewAttempted")
+    console.log(reviewAttempted)
+    if(stateLoaded)
+      localStorage.setItem('reviewAttempted', reviewAttempted.toString());
+  }, [reviewAttempted]);
+
+  function onGetFeedback() {
+    if (!reviewAttempted) {
+      setReviewAttempted(true);
+    }
+  }
+
+  function setFeedback() {
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -73,9 +103,9 @@ export default function LandingPage({ signIn }) {
       <main className="flex-grow mt-16 hero-element">
         <section className="bg-gradient-to-r from-blue-500 to-green-500 text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-5xl font-bold mb-6">Write Better, Faster, Smarter</h2>
+            <h2 className="text-5xl font-bold mb-6">Write Technical Content that Drives Results</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-                Go <span className='highlight'>beyond just grammar checks</span>, unlock deep editorial insights
+              Stand out with high-quality, expertly-reviewed technical writing that wins clients, grows your audience, and boosts your revenue.
             </p>
             <button
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
@@ -98,8 +128,7 @@ export default function LandingPage({ signIn }) {
                   </div>
                   <h4 className="text-xl font-semibold mb-2">Empower Your Voice—We Enhance, You Create</h4>
                   <p className="text-gray-700">
-                  Don't settle for AI tools that generate content for you. Our platform empowers you to write 
-                  authentically, providing expert guidance that refines your work without overshadowing your creativity. 
+                    Unlike content generators, we enhance your expertise. Our platform sharpens your technical writing, giving you full control over your content.
                   </p>
                 </div>
               </div>
@@ -108,10 +137,9 @@ export default function LandingPage({ signIn }) {
                   <div className="text-5xl text-blue-600 mb-4">
                     <FaCheckCircle />
                   </div>
-                  <h4 className="text-xl font-semibold mb-2">Personalized AI Feedback</h4>
+                  <h4 className="text-xl font-semibold mb-2">Tailored Technical Feedback</h4>
                   <p className="text-gray-700">
-                    Get tailored suggestions for improving your writing style, tone, and grammar. Our AI understands
-                    the nuances of language to help you craft compelling narratives.
+                    Receive feedback tailored to technical articles, ensuring your work is not only well-written but accurate and impactful.
                   </p>
                 </div>
               </div>
@@ -120,10 +148,9 @@ export default function LandingPage({ signIn }) {
                   <div className="text-5xl text-green-500 mb-4">
                     <FaCheckCircle />
                   </div>
-                  <h4 className="text-xl font-semibold mb-2">Instant Improvements</h4>
+                  <h4 className="text-xl font-semibold mb-2">Instant Feedback</h4>
                   <p className="text-gray-700">
-                    Enhance your work in minutes with our intuitive tools. Quickly identify areas for improvement and
-                    apply changes effortlessly.
+                    Simply paste your draft into our editor and receive instant feedback on clarity, structure, and technical correctness.
                   </p>
                 </div>
               </div>
@@ -132,10 +159,9 @@ export default function LandingPage({ signIn }) {
                   <div className="text-5xl text-purple-600 mb-4">
                     <FaCheckCircle />
                   </div>
-                  <h4 className="text-xl font-semibold mb-2">Specialized Assistance</h4>
+                  <h4 className="text-xl font-semibold mb-2">Optimize for Your Audience</h4>
                   <p className="text-gray-700">
-                    From blog posts to business reports, our AI is trained to assist with various types of content.
-                    Receive expert-level guidance for all your writing needs.
+                    From tutorials to whitepapers, optimize your content for your technical audience with guidance on language and terminology.
                   </p>
                 </div>
               </div>
@@ -154,14 +180,13 @@ export default function LandingPage({ signIn }) {
                     <FaQuoteLeft />
                   </div>
                   <p className="text-gray-700 mb-6">
-                    "InkwellAI has transformed my writing process. The AI suggestions are spot on and save me hours
-                    every week!"
+                    "InkwellAI helped me turn a rough technical blog into a clear, well-structured article that resonated with my audience."
                   </p>
                   <div className="flex items-center">
                     <img src="/user1.webp" alt="Eleanor Morgan" className="w-12 h-12 rounded-full" />
                     <div className="ml-4">
                       <p className="font-bold">Eleanor Morgan</p>
-                      <p className="text-sm text-gray-600">Freelance Writer</p>
+                      <p className="text-sm text-gray-600">Technical Writer</p>
                     </div>
                   </div>
                 </div>
@@ -172,14 +197,13 @@ export default function LandingPage({ signIn }) {
                     <FaQuoteLeft />
                   </div>
                   <p className="text-gray-700 mb-6">
-                    "The specialized AI assistants have helped me improve not just my grammar but also the overall
-                    tone of my work."
+                    "The AI gave me the insights I needed to improve my technical reports, and it only took minutes."
                   </p>
                   <div className="flex items-center">
                     <img src="/user2.webp" alt="Michael Carter" className="w-12 h-12 rounded-full" />
                     <div className="ml-4">
                       <p className="font-bold">Michael Carter</p>
-                      <p className="text-sm text-gray-600">Content Creator</p>
+                      <p className="text-sm text-gray-600">Engineer</p>
                     </div>
                   </div>
                 </div>
@@ -190,14 +214,13 @@ export default function LandingPage({ signIn }) {
                     <FaQuoteLeft />
                   </div>
                   <p className="text-gray-700 mb-6">
-                    "I love how quickly I can polish my chapters with InkwellAI. It's like having an editor on
-                    demand!"
+                    "InkwellAI made my technical articles clear and engaging, helping me gain credibility in my field."
                   </p>
                   <div className="flex items-center">
                     <img src="/user3.webp" alt="Damian Turner" className="w-12 h-12 rounded-full" />
                     <div className="ml-4">
                       <p className="font-bold">Damian Turner</p>
-                      <p className="text-sm text-gray-600">Published Author</p>
+                      <p className="text-sm text-gray-600">Software Developer</p>
                     </div>
                   </div>
                 </div>
@@ -206,18 +229,32 @@ export default function LandingPage({ signIn }) {
           </div>
         </section>
 
-        {/* Call to Action */}
+        {/* Try it for yourself Section */}
         <section className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h3 className="text-4xl font-bold mb-6">Ready to Transform Your Writing?</h3>
+            <h3 className="text-4xl font-bold mb-6">Try It For Yourself</h3>
             <p className="text-xl mb-8 max-w-xl mx-auto">
-              Sign up today and experience the power of AI-assisted writing.
+              Experience InkwellAI's technical feedback for free. Paste your content into our editor and see how you can improve instantly.
             </p>
+            {reviewAttempted && <ProAd />}
+             {/* Main Content */}
+             <EditorComponent 
+             settings={{
+                title: 'Try It For Yourself',
+                showButtonBar: false,
+                getFeedbackEnabled: !reviewAttempted
+             }}
+             onGetFeedback={onGetFeedback}
+             setFeedback={setFeedback}
+                genre="techincal"
+                type="article"
+             />
+             <br/>
             <button
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
               className="inline-flex items-center px-6 py-3 bg-white text-green-500 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
             >
-              <FaGoogle className="mr-2" /> Get Started with Google
+              <FaGoogle className="mr-2" /> Sign-up now
             </button>
           </div>
         </section>

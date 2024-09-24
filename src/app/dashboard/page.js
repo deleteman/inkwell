@@ -7,17 +7,21 @@ import Link from "next/link"
 import { Toaster, toast } from 'react-hot-toast'
 import { DEFAULT_ROLE, PRO_ROLE } from "../lib/constants"
 import { ArticleCard } from "../components/ArticleCard"
-import { ProAd } from "../components/ProAd"
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/")
+    },
+  })
   const router = useRouter()
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/")
+  useEffect(() => { //no free users allowed
+    if (session && session.user?.role === DEFAULT_ROLE) {
+      router.push("/subscribe")
     }
   }, [status, router])
 
@@ -66,7 +70,6 @@ export default function Dashboard() {
           </Link>
         </div>
       </header>
-      <ProAd />              
       {/* Main Content */}
       {loading && (
         <main className="container mx-auto px-4 py-8">

@@ -4,7 +4,7 @@ import { PRO_ROLE } from "../lib/constants"
 import Link from "next/link"
 
 export function ProAd() {
-  const { data: session, update } = useSession({ required: true, staleTime: 0 })
+  const { data: session, update } = useSession() 
   const [isSessionUpdated, setIsSessionUpdated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -55,17 +55,16 @@ export function ProAd() {
 
   return (
     <>
-      {session && session.user.role !== PRO_ROLE && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
-          <p className="font-bold">Unlock More Features!</p>
+          <p className="font-bold">Want to try Pro?</p>
           <p>
-            Upgrade to Pro to customize your AI editor and receive tailored feedback.
+            Upgrade to Pro to get access to your personalized AI editor and review as many articles as you want.
             <Link href="/subscribe" className="text-blue-600 underline ml-2">
               Upgrade Now
             </Link>
           </p>
         </div>
-      )}
+      
     </>
   )
 }

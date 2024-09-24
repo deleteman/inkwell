@@ -3,13 +3,14 @@ import {  EditorContent } from '@tiptap/react'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 
-export function Editor({editor, writingState}) {
-  const { data: session, status } = useSession()
+export function Editor({editor, showButtons = true }) {
+
       return (  
         <>
        
     <div className="w-full lg:w-2/3 editor-container">
       {/* Toolbar */}
+      {showButtons && (
       <div className="toolbar mb-4 flex gap-2">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -29,8 +30,9 @@ export function Editor({editor, writingState}) {
         >
           <FiUnderline />
         </button>
-        {/* Add more formatting buttons as needed */}
       </div>
+        )}
+        {/* Add more formatting buttons as needed */}
       {/* Editor Content */}
       <EditorContent editor={editor} className="min-h-[400px] bg-white border border-gray-300 p-4 rounded shadow-md" />
     </div>

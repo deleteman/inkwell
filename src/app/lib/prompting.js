@@ -139,17 +139,18 @@ function freePrompt() {
 }   
           
 
-export function getSystemPrompt(genre, type, additionalContext, role) {
+export function getSystemPrompt(genre, type, additionalContext, title = null, role) {
     let prompt = ''
 
-    if(role != PRO_ROLE) {
+    /*if(role != PRO_ROLE) {
         prompt = ` ${freePrompt()} 
             ${genericPrompt()}
             `
     } else {
         
+        */
         if(TypePromptMapping[type] != undefined) {
-            prompt = `${TypePromptMapping[type](genre, additionalContext)}
+            prompt = `${TypePromptMapping[type](genre,title, additionalContext)}
                     ${themeGuard(genre)}
                     ${genericPrompt()}`
         } else { 
@@ -159,7 +160,7 @@ export function getSystemPrompt(genre, type, additionalContext, role) {
                       ${genericPrompt()}  
                     `
 
-        }
+       // }
     }
 
     return prompt
