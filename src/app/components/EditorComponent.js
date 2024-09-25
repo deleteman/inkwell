@@ -37,7 +37,8 @@ const CustomHighlight = Highlight.extend({
 
 const defaultSettings = {
     title: "New article",
-    showButtonBar: true
+    showButtonBar: true,
+    getFeedbackEnabled: true
 }
 
 

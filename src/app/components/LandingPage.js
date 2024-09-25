@@ -103,7 +103,7 @@ export default function LandingPage({ signIn }) {
       <main className="flex-grow mt-16 hero-element">
         <section className="bg-gradient-to-r from-blue-500 to-green-500 text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-5xl font-bold mb-6">Write Technical Content that Drives Results</h2>
+            <h2 className="text-5xl font-bold mb-6">Optimize Your Technical Content for Maximum Impact</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
               Stand out with high-quality, expertly-reviewed technical writing that wins clients, grows your audience, and boosts your revenue.
             </p>
