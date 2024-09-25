@@ -23,6 +23,7 @@ import { FeedbackCard } from "../components/FeedbackCard"
 import { EditorContext } from "@/app/components/EditorContext"
 import { EditorCustomizer } from "../components/EditorCustomizer"
 import { EditorComponent } from "../components/EditorComponent"
+import { DEFAULT_ROLE } from "@/app/lib/constants"
 
 const CustomHighlight = Highlight.extend({
   addAttributes() {
@@ -44,7 +45,12 @@ const CustomHighlight = Highlight.extend({
 
 
 export default function EditArticle({ params }) {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+     router.push('/')
+    },
+  })
   const router = useRouter()
   const [title, setTitle] = useState("")
   const [feedback, setFeedback] = useState([])
@@ -66,61 +72,18 @@ export default function EditArticle({ params }) {
         setAdditionalContext,
     };
 
-  
-
-  const editor = useEditor({
-    extensions: [
-        Color.configure({ types: [TextStyle.name, ListItem.name] }),
-        TextStyle.configure({ types: [ListItem.name] }),
-        StarterKit.configure({
-          bulletList: {
-            keepMarks: true,
-            keepAttributes: false, 
-          },
-          orderedList: {
-            keepMarks: true,
-            keepAttributes: false, 
-          },
-        }),
-      CustomHighlight.configure({ multicolor: true }),
-      Markdown,
-      Underline
-    ],
-    editorProps: {
-        attributes: {
-          class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
-        },
-      },
-    content: '<p>Start typing...</p>',
-    onUpdate: ({ editor }) => {
-      // You can add auto-save functionality here
-    }
-  })
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/")
+    if(session && session.user.role == DEFAULT_ROLE) {
+      router.push('/subscribe')
+      return
     }
-  }, [status, router])
+  }, [session, status])
 
-  useEffect(() => {
-   
-    if (editor) {
-      setLoading(false )
-    }
-  }, [ editor])
-
-  
 // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarCollapsed(!isSidebarCollapsed)
     }
-
-   if (status === "loading" || loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="text-gray-600">Loading...</div>
-    </div>
-  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
