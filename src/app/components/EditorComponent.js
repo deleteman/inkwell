@@ -58,6 +58,7 @@ export function EditorComponent({
     const [additionalContext, setAdditionalContext] = useState("") //empty because we don' need more context for tech articles
     const [feedback, setFeedback] = useState([])
    const [loading, setLoading] = useState(true)
+   const [localArticleID, setLocalArticleID] = useState(articleID)
 
 const editor = useEditor({
     immediatelyRender: false,
@@ -93,9 +94,13 @@ const editor = useEditor({
       },
     },
     content: '<p>Start typing...</p>',
-    
-    
   })
+
+  if(!onSetArticleID) {
+    onSetArticleID = (id) => {
+      setLocalArticleID(id)
+    }
+  }
   
   const editorContextValue = {
     genre,
@@ -160,7 +165,7 @@ const editor = useEditor({
             <button
               onClick={() => {
                 if(onSaveArticle) 
-                 onSaveArticle(editor, title, genre, type, additionalContext, toast, articleID, onSetArticleID)
+                 onSaveArticle(editor, title, genre, type, additionalContext, toast, localArticleID, onSetArticleID)
                 }}
               className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300 flex items-center"
             >
