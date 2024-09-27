@@ -82,6 +82,11 @@ body {
     border-radius: 10px;
     cursor: pointer;
 } 
+.suggestion-applied {
+  background: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
 
 .tiptap p {
   color: black;

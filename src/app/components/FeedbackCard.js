@@ -1,4 +1,7 @@
-import { _iterSSEMessages } from 'openai/streaming';
+import { useState, useContext } from 'react';
+import { titleAffectingCategories } from "../lib/editor-helpers"
+import { EditorContext } from "@/app/components/EditorContext"
+
 import { FaEdit, FaLightbulb, FaPalette, 
         FaExclamationTriangle, FaUser, FaCommentDots, 
         FaQuestionCircle, FaBriefcase, FaBullhorn,
@@ -23,7 +26,37 @@ function highlightFeedback(idx, action="highlight") {
     document.getElementById("highlight_" + idx)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+   
+
+
+
   export function FeedbackCard({ item, index }) {
+    const {title, setTitle} = useContext(EditorContext)
+
+      const [applied, setApplied] = useState(false)
+      const [ignored, setIgnored] = useState(false)
+
+    function applySuggestion(idx, suggestion, category) {
+      if(titleAffectingCategories.includes(category)) {
+        setTitle(suggestion)
+        setApplied(true)
+        return false
+      }
+      const suggestionElement = document.getElementById("highlight_" + idx)
+      if(suggestionElement) {
+        suggestionElement.innerHTML = `${suggestion}` 
+        suggestionElement.classList.remove("suggested-highlight")
+        suggestionElement.classList.add("suggestion-applied")
+        setApplied(true)
+      }
+      return false
+    }
+
+    function ignoreSuggestion(idx) {
+      setIgnored(true)
+    }
+
+
     // Map categories to icons
     const categoryIcons = {
       're-write with the new proposed text': <FaEdit className="text-blue-600 inline-block mr-2" />,
@@ -67,7 +100,7 @@ function highlightFeedback(idx, action="highlight") {
       "obvious-plot-twist": "Too obvious",
       'poor-intro': "Poor intro",
       'misleading-intro': "Misleading intro",
-      'missing-cta': "Missing CTA",
+      'missing-cta': "Could use a CTA", //changed because it tends to look for CTAs in multiple places
       'passive-voice': "Passive voice",
       'explanation-too-technical': "The explanation is too technical",
       "technically-incorrect": "Technically incorrect",
@@ -111,10 +144,23 @@ function highlightFeedback(idx, action="highlight") {
           {categoryIcons[item.category] || <FaExclamationTriangle className="text-gray-500 inline-block mr-2" />}
           <strong className="text-blue-600">{categoryNames[item.category] || item.category}:</strong>
         </div>
-        <p className="text-gray-800">{item.suggestion}</p>
         {item.originalText && (
-          <em className="text-gray-500 block mt-1">"{item.originalText}"</em>
+          <em className="text-gray-500 text-xs text-left block mt-1">"{item.originalText}"</em>
         )}
+        {item.explanation && (
+          <span className="text-gray-500 text-left block mt-1">{item.explanation}</span>
+        )}
+
+
+        <p className="text-gray-800 font-medium text-left">Replace with:</p> <p className="text-gray-800 text-left">{item.suggestion}</p>
+        <div className="flex items-center mt-2">
+          {(!applied && !ignored) && (
+            <>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 mr-2" onClick={() => applySuggestion(index, item.suggestion, item.category)}>Apply</button>
+        <button className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300" onClick={() => ignoreSuggestion(index)}>Ignore</button>
+        </>
+          )}
+      </div>
       </div>
     )
   }

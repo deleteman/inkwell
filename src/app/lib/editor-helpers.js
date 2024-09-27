@@ -1,3 +1,14 @@
+export const generalFeedbackCategories = ["wrong-theme",
+                                  "title-too-bland",
+                                  "title-too-short",
+                                  "poor-title",
+                                  "promise-unfulfilled"
+                                  ]
+ export const titleAffectingCategories = ["title-too-bland",
+                                          "title-too-short",
+                                          "poor-title"
+                                          ]
+
 export const exportToMarkdown = (editor, toast) => {
     const markdownContent = editor.getText()
     // For simplicity, you can copy the markdown content to clipboard or download as a file
@@ -6,7 +17,7 @@ export const exportToMarkdown = (editor, toast) => {
   }
 
 
-export const getFeedback = async (editor, title, genre, type, additionalContext, setFeedback, toast, styles) => {
+export const getFeedback = async (editor, title, genre, type, additionalContext, setFeedback, toast, styles, doneCB = null) => {
     const content = editor.getText()
     toast.loading('Fetching feedback...')
     const res = await fetch("/api/feedback", {
@@ -15,44 +26,106 @@ export const getFeedback = async (editor, title, genre, type, additionalContext,
       body: JSON.stringify({ title, content, genre, type, additionalContext }),
     })
     const data = await res.json()
+    if(typeof doneCB === "function") {
+      doneCB()
+    }
     toast.dismiss()
     if(data.feedback.error !== undefined) {
-        console.log("Nothing to do for now...")
         toast('No feedback at the moment.')
         return
     }
-    setFeedback(data.feedback)
-    highlightText(data.feedback, editor, styles)
+  console.log("total feedback elements:", data.feedback.length)
+    const sortedFeedback = data.feedback.map(a => {
+      if(generalFeedbackCategories.includes(a.categories)){
+          a.originalTextPosition = { start: -1 }
+        }
+        return a
+      }).sort((a, b) => a.originalTextPosition?.start - b.originalTextPosition.start);
+
+    setFeedback(sortedFeedback)
+    highlightText(sortedFeedback, editor, styles)
     toast.success('Feedback updated!')
   }
 
 
+  /**
+   * Cleans and normalizes the text by:
+   * - Removing leading/trailing whitespace and newlines.
+   * - Replacing multiple consecutive newlines with a single newline.
+   * - Collapsing multiple spaces into a single space.
+   * @param {string} text - The text to clean.
+   * @returns {string} - The cleaned and normalized text.
+   */
+  const cleanAndNormalizeText = (text) => {
+    if (!text) return '';
+  
+    // Remove leading and trailing whitespace and newlines
+    let cleaned = text.replace(/^[\s\n]+|[\s\n]+$/g, '');
+  
+    // Replace multiple consecutive newlines with a single newline
+    cleaned = cleaned.replace(/[\n]{2,}/g, '\n');
+  
+    // Replace multiple spaces with a single space
+    cleaned = cleaned.replace(/\s{2,}/g, ' ');
+  
+    return cleaned;
+  };
+  
+   function replaceRange(s, start, end, substitute) {
+    let p1 = s.substring(0, start) 
+    let p2 = s.substring(end)
+    console.log(p1)
+    console.log(substitute)
+    console.log(p2) 
+    return  p1 + substitute + p2
+}
+
 export const highlightText = (feedback, editor, styles) => {
-    let fullContent = editor.getText()
-    feedback.forEach(({ originalText, category }, idx) => {
-      if (category === "wrong-theme") return
-      if(!originalText) return
-  
-      const color = getCategoryColor(category)
-      
-      // Escape special regex characters in originalText
-      let escapedText = originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      
-      // Replace all quotes in escapedText with a regex pattern that matches either single or double quotes
-      escapedText = escapedText.replace(/['"]/g, '["\']')
-      
-      // Create a regex with the 'g' flag for global matching
-      const regex = new RegExp(escapedText, 'g')
-  
-      // Use a replacement function to maintain the original matched text's quotes
-      fullContent = fullContent.replace(regex, (matchedText) => {
-        return `<mark class="${styles.highlightedText} ${color}" id="highlight_${idx}" data-id="highlight_${idx}">${matchedText}</mark>`
-      })
-    })
-    editor.commands.setContent(fullContent)
+  let fullContent = editor.getText()
+  let offset  = 0
+
+  // Sort feedback by starting position
+  console.log("new total feedback elements:", feedback.length)
+
+  // Merge overlapping feedbacks
+  const mergedFeedback = [];
+  for (const fb of feedback) {
+    if (mergedFeedback.length === 0 || fb.originalTextPosition.start >= mergedFeedback[mergedFeedback.length - 1].originalTextPosition.end) {
+      mergedFeedback.push(fb);
+    } else {
+      const lastMergedFb = mergedFeedback[mergedFeedback.length - 1];
+      lastMergedFb.originalTextPosition.end = Math.max(lastMergedFb.originalTextPosition.end, fb.originalTextPosition.end);
+      lastMergedFb.category = 'multiple'; // or some other way to indicate merged feedback
+      lastMergedFb.suggestion = `${lastMergedFb.suggestion} <br/> ${fb.suggestion}`;
+    }
   }
+  console.log("merged total feedback elements:", mergedFeedback.length) 
 
+  mergedFeedback.forEach(({ originalText, category, originalTextPosition }, idx) => {
+    console.log(category, "-", idx)
+    if (category === "wrong-theme" || !originalText) return;
+    if( generalFeedbackCategories.includes(category)) return;
 
+    const color = getCategoryColor(category);
+
+    //console.log("orignalText:", originalText);
+    
+    const replacedValue = `<mark class="${styles.highlightedText} ${color}" 
+                              id="highlight_${idx}" 
+                              data-id="highlight_${idx}">${originalText}</mark>`
+    //console.log("New replacement, starting at: ", originalTextPosition.start, "with an offset of ", offset)
+    let start = originalTextPosition.start + offset
+    let end = originalTextPosition.end + offset
+    offset += replacedValue.length - originalText.length
+    fullContent = replaceRange(fullContent, start, end, replacedValue)
+  });
+
+  //console.log('\nFinal Highlighted Content:', fullContent);
+  
+  // Step 3: Update the editor content with highlighted text
+  editor.commands.setContent(fullContent);
+};
+  
 export const saveArticle = async (editor, title, genre, type, additionalContext, toast, articleID = null, setArticleID) => {
     if(!articleID) { // the article is new
         const res = await fetch(`/api/articles`, {
@@ -118,4 +191,77 @@ export function getCategoryColor(category) {
       return 'bg-red-100'
     }
   }
+}
+
+
+
+/**
+ * Normalizes a string by replacing non-standard characters with their standard equivalents.
+ *
+ * @param {string} str - The input string to be normalized.
+ * @returns {string} - The normalized string with standard characters.
+ */
+export function normalizeString(str) {
+  // Mapping of non-standard characters to their standard equivalents
+  const charMap = {
+    // Curly Single Quotes
+    '’': "'", // Right single quotation mark
+    '‘': "'", // Left single quotation mark
+
+    // Curly Double Quotes
+    '“': '"', // Left double quotation mark
+    '”': '"', // Right double quotation mark
+
+    // Dashes
+    '–': '-', // En dash
+    '—': '-', // Em dash
+
+    // Ellipsis
+    '…': '...', // Ellipsis
+
+    // Symbols
+    '™': 'TM',   // Trademark
+    '®': 'R',    // Registered trademark
+    '©': '(c)',  // Copyright
+    '±': '+/-',  // Plus-minus sign
+    '÷': '/',    // Division sign
+    '×': 'x',    // Multiplication sign
+
+    // Accented Characters (Optional: Add as needed)
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+
+ // Non-standard space characters
+ '\u00A0': ' ', // Non-breaking space (NBSP)
+ '\u2002': ' ', // En space
+ '\u2003': ' ', // Em space
+ '\u2009': ' ', // Thin space
+ '\u200A': ' ', // Hair space
+ '\u2007': ' ', // Figure space
+ '\u2008': ' ', // Punctuation space
+ '\u200B': ' ', // Zero-width space
+ '\u3000': ' ', // Ideographic space
+
+    // Add more mappings here
+  };
+
+  // Create a regular expression that matches any of the keys in charMap
+  const regex = new RegExp(Object.keys(charMap).join('|'), 'g');
+
+  // Replace each match with its corresponding value from charMap
+  return str.replace(regex, (matched) => charMap[matched] || matched);
 }

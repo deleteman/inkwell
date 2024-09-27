@@ -2,13 +2,20 @@ import { OpenAI } from "openai"
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
 import { getSystemPrompt } from '../../lib/prompting'
+import { normalizeString } from '../../lib/editor-helpers'
 
 const openai = new OpenAI()
 
 export const maxDuration = 60
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+
+
 export async function POST(req) {
-  const { content, genre, title, type, additionalContext } = await req.json()
+  let { content, genre, title, type, additionalContext } = await req.json()
   const session = await getServerSession(authOptions)
 
 
@@ -25,6 +32,8 @@ export async function POST(req) {
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: payload,
+    seed: 11112,
+    temperature: 0.2
   })
 
   const feedback = completion.choices[0].message?.content
@@ -41,6 +50,25 @@ export async function POST(req) {
     if(!Array.isArray(parsedFeedback)) {
         parsedFeedback = [parsedFeedback]
     }
+    content = normalizeString(content)
+
+    parsedFeedback = parsedFeedback.map((feedback) => {
+      if(feedback.error) return feedback
+      feedback.originalText = normalizeString(feedback.originalText)
+      console.log("Prior start: ", feedback.originalTextPosition.start)
+      /* */
+      let escapedText = escapeRegExp(feedback.originalText)
+      //console.log("Escaped text: ", escapedText)
+      let r = new RegExp(escapedText, 'igm')
+      let results = r.exec(content)
+      //console.log(feedback.originalText)
+      //console.log(results)
+      //*/
+      feedback.originalTextPosition.start = (results?.index >= 0 ) ? results.index : -1
+      feedback.originalTextPosition.end = feedback.originalTextPosition.start + feedback.originalText.length  
+      console.log("New start: ", feedback.originalTextPosition.start)
+      return feedback
+    })
   } catch (error) {
     console.error('Failed to parse feedback:', error)
     return new Response(JSON.stringify({ error: 'Invalid response format from OpenAI' }), {

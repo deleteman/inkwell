@@ -108,13 +108,30 @@ const TypePromptMapping = {
 function genericPrompt() {
     return  `
     if there are no problems, then:
-    - For each suggestion, include the original text (without affecting its capitalization), the category, and the suggestion. Use this JSON format:
+    - For each suggestion, include the original text (without affecting its capitalization or punctuation), 
+     the category, 
+     identify the exact start and end indices of the text to be improved substring within the original text
+      accounting for minor discrepancies in the text to be improved substring compared to the original text 
+      (e.g., extra/missing spaces, different punctuation marks, varied capitalization)
+      If the text to be improved substring does not exactly match any part of the original text
+      then perform fuzzy matching to find the best possible match.
+      Here is an example:
+            Original Text:
+                "Understanding how functions work in JavaScript is essential for developers."
+
+            Feedback Suggestion:
+                "how functions work in javascript"
+            Range: start: 16  end: 42
+    , and the suggestion.
+    Use this JSON format:
             
             [
             {
                 "originalText": "<text to improve>",
                 "category": "<category>",
-                "suggestion": "<suggestion>"
+                "explanation: "<explanation of the suggestion>",
+                "suggestion": "<only suggestion text>",
+                "originalTextPosition": {"start": <start position>, "end": <end position>}
             },
             ...
             ]

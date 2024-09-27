@@ -9,6 +9,7 @@ import Underline from '@tiptap/extension-underline'
 import { Extension,markPasteRule } from '@tiptap/core'
 
 import { FiSave, FiEye, FiDownload, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { FaSpinner } from 'react-icons/fa'
 import { Toaster, toast } from 'react-hot-toast'
 import { useState } from 'react'
 import { Editor } from "../components/Editor"
@@ -59,6 +60,7 @@ export function EditorComponent({
     const [feedback, setFeedback] = useState([])
    const [loading, setLoading] = useState(true)
    const [localArticleID, setLocalArticleID] = useState(articleID)
+   const [gettingFeedback, setGettingFeedback] = useState(false)
 
 const editor = useEditor({
     immediatelyRender: false,
@@ -107,6 +109,8 @@ const editor = useEditor({
     setGenre,
     type,
     setType,
+    title,
+    setTitle,
     additionalContext,
     setAdditionalContext,
   };
@@ -175,14 +179,15 @@ const editor = useEditor({
             <button
               onClick={() =>{
                 if(onGetFeedback) {
-                    getFeedback(editor, title, genre, type, additionalContext, setFeedback, toast, styles)
+                    setGettingFeedback(true)
+                    getFeedback(editor, title, genre, type, additionalContext, setFeedback, toast, styles, () => setGettingFeedback(false)) 
                     onGetFeedback()
                 }
                 }}
-                disabled={!settings.getFeedbackEnabled}
-              className={`bg-${settings.getFeedbackEnabled ? 'green-500' : 'gray-800'} 
+                disabled={!settings.getFeedbackEnabled || gettingFeedback}
+              className={`bg-${settings.getFeedbackEnabled && !gettingFeedback ? 'green-500' : 'gray-800'} 
                           text-white px-4 py-2 rounded-full 
-                          hover:bg-${settings.getFeedbackEnabled ? 'green-600' : 'gray-900'} transition duration-300 flex items-center`}
+                          hover:bg-${settings.getFeedbackEnabled && !gettingFeedback ? 'green-600' : 'gray-900'} transition duration-300 flex items-center`}
             >
               <FiEye className="mr-2" /> Review
             </button>
@@ -195,7 +200,6 @@ const editor = useEditor({
         {/* Sidebar */}
         <EditorContext.Provider value={editorContextValue}>
         
-        </EditorContext.Provider>
 
         {/* Editor and Feedback Section */}
         <div className="flex-1 p-4">
@@ -215,11 +219,16 @@ const editor = useEditor({
               id="feedback-box"
             >
               <h2 className="text-xl font-bold mb-4 text-gray-600">Your editor's thoughts</h2>
-              {feedback.length === 0 ? (
+              {gettingFeedback && 
+                <p className="text-gray-600 text-center">
+                    Reading your article, one moment please...
+                    <FaSpinner className="animate-spin inline-block ml-2" />
+                </p>}
+              {!gettingFeedback && feedback.length === 0 ? (
                 <p className="text-gray-600">No feedback yet. Click on "Review" to let your editor look at your writing.</p>
               ) : (
                 <div className="space-y-4">
-                  {feedback.map((item, index) => (
+                  {!gettingFeedback && feedback.map((item, index) => (
                     <FeedbackCard key={index} item={item} index={index} />
                   ))}
                 </div>
@@ -227,6 +236,7 @@ const editor = useEditor({
             </div>
           </div>
         </div>
+        </EditorContext.Provider>
       </main>
     </div>
 
