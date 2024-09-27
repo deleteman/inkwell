@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { titleAffectingCategories } from "../lib/editor-helpers"
+import { titleAffectingCategories, generalFeedbackCategories } from "../lib/editor-helpers"
 import { EditorContext } from "@/app/components/EditorContext"
 
 import { FaEdit, FaLightbulb, FaPalette, 
@@ -62,7 +62,7 @@ function highlightFeedback(idx, action="highlight") {
       're-write with the new proposed text': <FaEdit className="text-blue-600 inline-block mr-2" />,
       'can be improved with suggestion': <FaLightbulb className="text-yellow-500 inline-block mr-2" />,
       'wrong-theme': <FaPalette className="text-red-500 inline-block mr-2" />,
-      'too-cliche': <FaExclamationTriangle className="text-orange-500 inline-block mr-2" />,
+      'old-fashioned': <FaExclamationTriangle className="text-orange-500 inline-block mr-2" />,
       'personal-opinion': <FaUser className="text-green-500 inline-block mr-2" />,
       'informal-language': <FaCommentDots className="text-purple-500 inline-block mr-2" />,
       'uncertain-language': <FaQuestionCircle className="text-gray-500 inline-block mr-2" />,
@@ -88,7 +88,7 @@ function highlightFeedback(idx, action="highlight") {
       're-write with the new proposed text': "Should re-write",
       'can be improved with suggestion': "Could be improved",
       'wrong-theme': "Wrong theme",
-      'too-cliche': "Too cliché",
+      'old-fashioned': "No longer used",
       'personal-opinion': "Personal opinion",
       'informal-language': "Informal language",
       'uncertain-language': "Uncertain language",   
@@ -154,7 +154,7 @@ function highlightFeedback(idx, action="highlight") {
 
         <p className="text-gray-800 font-medium text-left">Replace with:</p> <p className="text-gray-800 text-left">{item.suggestion}</p>
         <div className="flex items-center mt-2">
-          {(!applied && !ignored) && (
+          {(!applied && !ignored && !generalFeedbackCategories.includes(item.category)) && (
             <>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 mr-2" onClick={() => applySuggestion(index, item.suggestion, item.category)}>Apply</button>
         <button className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300" onClick={() => ignoreSuggestion(index)}>Ignore</button>
