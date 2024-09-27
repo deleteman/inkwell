@@ -74,9 +74,9 @@ export const getFeedback = async (editor, title, genre, type, additionalContext,
    function replaceRange(s, start, end, substitute) {
     let p1 = s.substring(0, start) 
     let p2 = s.substring(end)
-    console.log(p1)
-    console.log(substitute)
-    console.log(p2) 
+    //console.log(p1)
+    //console.log(substitute)
+    //console.log(p2) 
     return  p1 + substitute + p2
 }
 
@@ -93,6 +93,9 @@ export const highlightText = (feedback, editor, styles) => {
     if (mergedFeedback.length === 0 || fb.originalTextPosition.start >= mergedFeedback[mergedFeedback.length - 1].originalTextPosition.end) {
       mergedFeedback.push(fb);
     } else {
+      console.log("Merging: ")
+      console.log(lastMergedFb)
+      console.log(fb)
       const lastMergedFb = mergedFeedback[mergedFeedback.length - 1];
       lastMergedFb.originalTextPosition.end = Math.max(lastMergedFb.originalTextPosition.end, fb.originalTextPosition.end);
       lastMergedFb.category = 'multiple'; // or some other way to indicate merged feedback

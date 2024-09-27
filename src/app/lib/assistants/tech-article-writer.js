@@ -1,8 +1,8 @@
 
 export function getTechnicalArticleChecks() {
     return `
-    "title-too-bland": when the title of the article is just boring
-    "title-too-short": when the title of the article is too short
+    "title-too-bland": when the title of the article is just boring (only applies to the content marked as the title)
+    "title-too-short": when the title of the article is too short (only applies to the content marked as the title)
     "poor-title": when the title of the article doesn't really describe the article. This rule only applies to the title of the article.
     "technically-incorrect": when a sentence is not true from the technical point of view
     "explanation-too-technical": when the explanation is too technical and could be simplified to help others understand the concept
