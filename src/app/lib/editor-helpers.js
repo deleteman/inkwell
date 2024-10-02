@@ -9,6 +9,11 @@ export const generalFeedbackCategories = ["wrong-theme",
                                           "poor-title"
                                           ]
 
+
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export const exportToMarkdown = (editor, toast) => {
     const markdownContent = editor.getText()
     // For simplicity, you can copy the markdown content to clipboard or download as a file
@@ -35,15 +40,16 @@ export const getFeedback = async (editor, title, genre, type, additionalContext,
         return
     }
   console.log("total feedback elements:", data.feedback.length)
-    const sortedFeedback = data.feedback.map(a => {
-      if(generalFeedbackCategories.includes(a.categories)){
+    const sortedFeedback = data.feedback
+    .map(a => {
+      if(generalFeedbackCategories.includes(a.category)){
           a.originalTextPosition = { start: -1 }
         }
         return a
       }).sort((a, b) => a.originalTextPosition?.start - b.originalTextPosition.start);
 
     setFeedback(sortedFeedback)
-    highlightText(sortedFeedback, editor, styles)
+    //highlightText(sortedFeedback, editor, styles)
     toast.success('Feedback updated!')
   }
 
@@ -71,7 +77,7 @@ export const getFeedback = async (editor, title, genre, type, additionalContext,
     return cleaned;
   };
   
-   function replaceRange(s, start, end, substitute) {
+   export function replaceRange(s, start, end, substitute) {
     let p1 = s.substring(0, start) 
     let p2 = s.substring(end)
     //console.log(p1)
@@ -84,21 +90,24 @@ export const highlightText = (feedback, editor, styles) => {
   let fullContent = editor.getText()
   let offset  = 0
 
+  const filteredFeedback = feedback.filter(fb => !generalFeedbackCategories.includes(fb.category))
   // Sort feedback by starting position
   console.log("new total feedback elements:", feedback.length)
 
   // Merge overlapping feedbacks
   const mergedFeedback = [];
-  for (const fb of feedback) {
+  for (const fb of filteredFeedback) {
     if (mergedFeedback.length === 0 || fb.originalTextPosition.start >= mergedFeedback[mergedFeedback.length - 1].originalTextPosition.end) {
       mergedFeedback.push(fb);
     } else {
       console.log("Merging: ")
+      const lastMergedFb = mergedFeedback[mergedFeedback.length - 1];
+
       console.log(lastMergedFb)
       console.log(fb)
-      const lastMergedFb = mergedFeedback[mergedFeedback.length - 1];
       lastMergedFb.originalTextPosition.end = Math.max(lastMergedFb.originalTextPosition.end, fb.originalTextPosition.end);
       lastMergedFb.category = 'multiple'; // or some other way to indicate merged feedback
+      lastMergedFb.subFeedback = [fb]
       lastMergedFb.suggestion = `${lastMergedFb.suggestion} <br/> ${fb.suggestion}`;
     }
   }
@@ -259,6 +268,23 @@ export function normalizeString(str) {
  '\u200B': ' ', // Zero-width space
  '\u3000': ' ', // Ideographic space
 
+    // non-standard coding characters
+    '\u202F': ' ', // Narrow no-break space
+    '\u2000': ' ', // En quad
+    '\u2001': ' ', // Em quad
+    '\u2002': ' ', // En space
+    '\u2003': ' ', // Em space
+    '\u2004': ' ', // Three-per-em space
+    '\u2005': ' ', // Four-per-em space
+    '\u2006': ' ', // Six-per-em space
+    '\u2008': ' ', // Punctuation space
+    '\u2009': ' ', // Thin space
+    '\u200A': ' ', // Hair space
+    '\u2028': ' ', // Line separator
+    '\u2029': ' ', // Paragraph separator
+    '\u202F': ' ', // Narrow no-break space
+    '\u205F': ' ', // Medium mathematical space
+    '\u3000': ' ', // Ideographic space
     // Add more mappings here
   };
 

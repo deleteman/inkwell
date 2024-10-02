@@ -6,7 +6,6 @@ import TextStyle from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import Underline from '@tiptap/extension-underline'
-import { Extension,markPasteRule } from '@tiptap/core'
 
 import { FiSave, FiEye, FiDownload, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { FaSpinner } from 'react-icons/fa'
@@ -19,6 +18,11 @@ import { useEffect } from 'react'
 
 import { EditorContext } from "@/app/components/EditorContext"
 import styles from './editorComponent.module.css'
+import { generalFeedbackCategories } from '../lib/editor-helpers'
+
+import { Mark } from '@tiptap/core';
+
+import  { normalizeString } from "../lib/editor-helpers"
 
 const CustomHighlight = Highlight.extend({
     addAttributes() {
@@ -36,6 +40,41 @@ const CustomHighlight = Highlight.extend({
     }
   })
 
+
+  // Define the custom 'highlight' mark
+const MyHighlight = Mark.create({
+  name: 'myhighlight',
+
+  // Define how to parse the mark from HTML
+  parseHTML() {
+    return [
+      {
+        tag: 'mark',
+      },
+    ];
+  },
+
+  // Define how to render the mark to HTML
+  renderHTML({ HTMLAttributes }) {
+    return ['mark', HTMLAttributes, 0];
+  },
+
+  // Define attributes for the mark (e.g., 'id')
+  addAttributes() {
+    return {
+      id: {
+        default: null,
+        parseHTML: element => element.getAttribute('id'),
+        renderHTML: attributes => {
+          if (!attributes.id) {
+            return {};
+          }
+          return { id: attributes.id, class: attributes.class };
+        },
+      },
+    };
+  },
+});
 const defaultSettings = {
     title: "New article",
     showButtonBar: true,
@@ -58,6 +97,10 @@ export function EditorComponent({
     const [title, setTitle] = useState("")
     const [additionalContext, setAdditionalContext] = useState("") //empty because we don' need more context for tech articles
     const [feedback, setFeedback] = useState([])
+
+    const [textFeedback, setTextFeedback] = useState([])
+    const [titleFeedback, setTitleFeedback] = useState([])
+
    const [loading, setLoading] = useState(true)
    const [localArticleID, setLocalArticleID] = useState(articleID)
    const [gettingFeedback, setGettingFeedback] = useState(false)
@@ -77,18 +120,20 @@ const editor = useEditor({
           keepAttributes: false, 
         },
       }),
-      CustomHighlight.configure({ multicolor: true }),
+      //CustomHighlight.configure({ multicolor: true }),
+      MyHighlight,
       Markdown,
       Underline, 
     ],
     editorProps: {
+      disableInputRules: true, 
       attributes: {
         class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       },
      transformPastedHTML: (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        return doc.body.textContent;
+        return normalizeString(doc.body.textContent);
     },
      onPaste: (event) => {
         console.log("On paste")
@@ -105,6 +150,7 @@ const editor = useEditor({
   }
   
   const editorContextValue = {
+    editor,
     genre,
     setGenre,
     type,
@@ -145,6 +191,12 @@ const editor = useEditor({
       console.log("Editor is not ready yet")
     }
   }, [editor])
+
+  useEffect(() => { 
+    console.log("Feedback received, splitting it: ", feedback)
+    setTextFeedback(feedback.filter( f => !generalFeedbackCategories.includes(f.category)))
+    setTitleFeedback(feedback.filter( f => generalFeedbackCategories.includes(f.category)))
+  }, [feedback]) 
 
   if (loading) {
     return (
@@ -228,7 +280,11 @@ const editor = useEditor({
                 <p className="text-gray-600">No feedback yet. Click on "Review" to let your editor look at your writing.</p>
               ) : (
                 <div className="space-y-4">
-                  {!gettingFeedback && feedback.map((item, index) => (
+                  {!gettingFeedback && titleFeedback.map((item, index) => (
+                    <FeedbackCard key={index} item={item} index={index} />
+                  ))}
+
+                  {!gettingFeedback && textFeedback.map((item, index) => (
                     <FeedbackCard key={index} item={item} index={index} />
                   ))}
                 </div>

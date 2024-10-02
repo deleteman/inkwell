@@ -1,8 +1,9 @@
 import { PRO_ROLE } from "./constants"
 import { bookChapterPrompt } from "./assistants/book-editor"
-import { articlePrompt } from "./assistants/article-writer"
+import { articleTitlePrompt, articlePrompt } from "./assistants/article-writer"
 import { newsletterPrompt } from "./assistants/newsletter-author"
 import { shortStoryPrompt } from "./assistants/short-story-writer"
+import { getCodeCheckPrompts } from "./assistants/tech-article-writer"
 
 function themeGuard(genre) {
     return `If the theme of the text doesn't align with the ${genre} genre, then return the following response:
@@ -69,26 +70,6 @@ function fantasyPrompt(genre, additionalContext) {
 
 }
 
-function technicalPrompt(genre, additionalContext) {
-}   
-
-function romanticPrompt(genre, additionalContext) {
-}   
-
-function comedyPrompt(genre, additionalContext) {
-}
-
-
-
-
-const GenrePromptMapping = {
-    "scifi": scifiPrompt,
-    "dystopia": dystopiaPrompt,
-    "fantasy": fantasyPrompt,
-    "technical": technicalPrompt,
-    "romantic": romanticPrompt,
-    "comedy": comedyPrompt,
-}
 
 const TypePromptMapping = {    
     "book-chapter": bookChapterPrompt,
@@ -98,7 +79,9 @@ const TypePromptMapping = {
 }
 
 
-
+const TypePromptMappingTitle = {    
+    "article": articleTitlePrompt,
+}
 
 
 
@@ -108,8 +91,40 @@ const TypePromptMapping = {
 function genericPrompt() {
     return  `
     if there are no problems, then:
-    - For each suggestion, include the original text (without affecting its capitalization or punctuation), 
+    - For each suggestion, include the original text (without changing it in any way, including its capitalization, punctuation, or adding or removing any characters, like newlines), 
      the category, 
+     the explanation of what is wrong or why a rule is applied here,
+    , and the actual suggested text for replacement.
+    Use this JSON format:
+            
+            [
+            {
+                "originalText": "<text to improve without modifications>",
+                "category": "<category>",
+                "explanation: "<explanation of the suggestion>",
+                "suggestion": "<only suggested text for replacement>",
+                "originalTextPosition": {"start": <start position>, "end": <end position>}
+            },
+            ...
+            ]
+            
+            Ensure the response is valid JSON, don't add quotes that don't comply with the json format, 
+            and only includes segments that need feedback.
+            Don't include the response inside a makrkdown code block.
+            If you can't process the data accordingly, respond with 
+            {
+                "error": "<the reason for you not being able to process the data>"
+            }
+            `
+
+}
+
+
+function genericPromptTitle() {
+    return  `
+    if there are no problems, then:
+    - For each suggestion, include the part of the title that needs improvement,
+     the category of the suggestion, 
      the explanation of what is wrong or why a rule is applied here,
     , and the actual suggested text for replacement.
     Use this JSON format:
@@ -120,7 +135,6 @@ function genericPrompt() {
                 "category": "<category>",
                 "explanation: "<explanation of the suggestion>",
                 "suggestion": "<only suggested text for replacement>",
-                "originalTextPosition": {"start": <start position>, "end": <end position>}
             },
             ...
             ]
@@ -141,10 +155,42 @@ function freePrompt() {
             - Identify specific segments of text that need improvement.
             - Provide feedback in one of the following categories: "re-write with the new proposed text," "can be improved with suggestion," or "too-cliche"
             `
-
 }   
-          
 
+function freeTitlePrompt() {
+    return `You are a helpful writing assistant. Analyze the provided title of the article and give suggestions in the following format:
+            - Idenify potential improvements for the title
+            `
+}
+
+export function getSystemPromptForCodeChecks(genre, type, additionalContext, title = null, role) {
+     let prompt = ''
+
+        prompt = `${getCodeCheckPrompts(genre,title, additionalContext)}
+                ${themeGuard(genre)}
+                ${genericPrompt()}`
+
+    return prompt
+}
+          
+export function getSystemPromptForTitle(genre, type, additionalContext, title = null, role) {
+     let prompt = ''
+
+    if(TypePromptMappingTitle[type] != undefined) {
+        prompt = `${TypePromptMappingTitle[type](genre,title, additionalContext)}
+                ${themeGuard(genre)}
+                ${genericPromptTitle()}`
+    } else { 
+        console.log("ERROR: the type is invalid!: ", type)
+        prompt = `
+                ${freeTitlePrompt()} 
+                    ${genericTitlePrompt()}  
+                `
+    }
+
+
+    return prompt
+}
 export function getSystemPrompt(genre, type, additionalContext, title = null, role) {
     let prompt = ''
 
