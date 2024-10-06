@@ -55,7 +55,12 @@ export default function EditArticle({ params }) {
       {/* Toaster for Notifications */}
       <Toaster position="top-right" />
 
-      <EditorComponent onSaveArticle={saveArticle} onGetFeedback={() => { }} articleID={params.id} />
+      <EditorComponent onSaveArticle={saveArticle} 
+        onGetFeedback={() => { }} articleID={params.id}
+        settings={{
+            showButtonBar: false,
+          }}
+        />
     </div>
   )
 }

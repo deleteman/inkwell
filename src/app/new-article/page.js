@@ -93,7 +93,11 @@ export default function EditArticle({ params }) {
       {/* Header */}
      
 
-        <EditorComponent onSaveArticle={saveArticle}  onGetFeedback={() => console.log("getting feedback")} />    
+        <EditorComponent onSaveArticle={saveArticle}  
+          onGetFeedback={() => console.log("getting feedback")} 
+          settings={{
+            showButtonBar: false,
+          }}/>    
     </div>
   )
 }

@@ -24,6 +24,10 @@ import { Mark } from '@tiptap/core';
 
 import  { normalizeString } from "../lib/editor-helpers"
 
+import TurndownService from 'turndown';
+const turndownService = new TurndownService();
+
+
 const CustomHighlight = Highlight.extend({
     addAttributes() {
       return {
@@ -130,17 +134,25 @@ const editor = useEditor({
       attributes: {
         class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       },
-     transformPastedHTML: (html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        return normalizeString(doc.body.textContent);
+     transformPastedHTML: (input) => {
+        // Simple check to see if the input contains HTML tags
+        const hasHTML = /<\/?[a-z][\s\S]*>/i.test(input);
+
+        if (hasHTML) {
+          // Convert HTML to Markdown
+          const markdown = turndownService.turndown(input);
+          return normalizeString(markdown);
+        } else {
+          // Assume it's plain text and normalize it
+          return normalizeString(input);
+        }
     },
      onPaste: (event) => {
         console.log("On paste")
         console.log(event)
       },
     },
-    content: '<p>Start typing...</p>',
+    content: '<p>Click here to get started...</p>',
   })
 
   if(!onSetArticleID) {
@@ -213,9 +225,9 @@ const editor = useEditor({
       <Toaster position="top-right" />
 
       {/* Header */}
-      <header className="bg-gray-200 shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">{settings.title}</h1>
+      <header className="bg-gray-200 shadow-md flex">
+        <div className="container overflow-y-auto sticky mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-2xl  font-bold text-blue-600">{settings.title}</h1>
           <div className="flex items-center space-x-4">
             {onSaveArticle && 
             <button
@@ -262,6 +274,18 @@ const editor = useEditor({
             placeholder="Title"
             className="w-full p-3 mb-6 border border-gray-300 rounded text-2xl font-semibold text-gray-600"
           />
+          <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md mb-6" role="alert">
+            <div class="flex">
+              <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+              <div>
+                <p class="font-bold">Paste your article here.  </p>
+                <p class="text-sm">
+                  Click on "Review" to get feedback from your editor.
+                  Note that the content will be automatically formatted to markdown if it's not already.
+                  </p>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
             {editor && <Editor editor={editor} showButtons={settings.showButtonBar} />}
