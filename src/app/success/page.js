@@ -8,7 +8,12 @@ import { toast } from 'react-hot-toast'
 
 export default function Success() {
   const router = useRouter()
-  const { data: session, status, update } = useSession()
+  const { data: session, status, update } = useSession({
+    required: true,
+    onUnauthenticated() {
+     router.push('/')
+    },
+  })
   const hasUpdatedSession = useRef(false)
 
   useEffect(() => {

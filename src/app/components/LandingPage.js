@@ -56,6 +56,12 @@ export default function LandingPage({ signIn }) {
                 </a>
               </li>
               <li>
+                <a href="/blog" className="text-gray-700 hover:text-blue-600">
+                  Blog
+                </a>
+              </li>
+             
+              <li>
                 <a href="/subscribe" className="text-gray-700 hover:text-blue-600">
                   Pricing
                 </a>

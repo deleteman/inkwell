@@ -1,0 +1,21 @@
+.relatedComparisonsContainer {
+    margin-top: 40px;
+  }
+  
+  .relatedComparisonsContainer h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .comparisonsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .comparisonsGrid a {
+    text-decoration: none;
+    color: #0070f3;
+  }
+  
+  
