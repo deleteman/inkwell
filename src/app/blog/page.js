@@ -20,10 +20,13 @@ export default async function BlogPage() {
       </Head>
       
       <header className="mb-16">
-        <h1 className="text-5xl font-bold text-blue-600">
-          Inkwell
-          <span className="text-green-500">AI</span>'s Blog
-        </h1>
+        <div className="flex items-center space-x-1">
+          <img src="/logo.png" alt="InkwellAI Logo" className="w-20 h-20" />
+          <h1 className="text-5xl font-bold text-blue-600">
+            Inkwell<span className="text-green-500">AI</span>'s Blog
+          </h1>
+        </div>
+ 
         <p className="text-xl text-gray-600 dark:text-gray-400">
           Learn everything you need to become a better writer.
         </p>

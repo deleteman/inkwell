@@ -60,6 +60,7 @@ export async function getCodeCheckFeedback(content, title, genre, type, addition
 
         parsedFeedback = parsedFeedback.map((feedbackItem) => {
             if (feedbackItem.error) return feedbackItem;
+            if (feedbackItem.category == "wrong-theme") return;
 
             // Normalize the original text
             const normalizedOriginalText = normalizeString(feedbackItem.originalText);
@@ -86,6 +87,12 @@ export async function getCodeCheckFeedback(content, title, genre, type, addition
 
             return feedbackItem;
         });
+
+        //Errors here mean there is no code to check, which is not necesarily a bad thing
+        if(parsedFeedback[0].error) {
+          parsedFeedback[0].notice = parsedFeedback[0].error;
+          delete parsedFeedback[0].error;
+        }
 
         return parsedFeedback;
 

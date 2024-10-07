@@ -212,7 +212,7 @@ function highlightFeedback(idx, item, action = "highlight", editor) {
       return (
         <div
           key={index}
-          className="p-2 border-b cursor-pointer"
+          className="p-2 border-b "
           id={`suggestion_${index}`}
         >
           <div className="flex items-center mb-1">
@@ -223,6 +223,22 @@ function highlightFeedback(idx, item, action = "highlight", editor) {
           {item.originalText && (
             <em className="text-gray-500 block mt-1">"{item.originalText}"</em>
           )}
+        </div>
+      )
+    }
+
+    if(item.notice) {    
+      return (
+        <div
+          key={index}
+          className="p-2 border-b "
+        >
+          <div className="flex items-center mb-1">
+            <FaExclamationTriangle className="text-blue-500 inline-block mr-2" />
+            <strong className="text-blue-600">Notice:</strong>
+          </div>
+
+          <p className="text-blue-800">{item.notice}</p>
         </div>
       )
     }

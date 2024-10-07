@@ -35,7 +35,10 @@ export const getFeedback = async (editor, title, genre, type, additionalContext,
       doneCB()
     }
     toast.dismiss()
-    if(data.feedback.error !== undefined) {
+    if(data.error) {
+      data.feedback = [data]
+    }
+    if(data.feedback?.error !== undefined) {
         toast('No feedback at the moment.')
         return
     }

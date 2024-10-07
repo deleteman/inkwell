@@ -40,14 +40,22 @@ export default function LandingPage({ signIn }) {
       {/* Header */}
       <header className="w-full bg-white shadow-md fixed top-0 z-50">
         <div className="container mx-auto flex justify-between items-center p-4">
-          <h1 className="text-3xl font-bold text-blue-600">
+        <div className="flex items-center space-x-1">
+          <img src="/logo.png" alt="InkwellAI Logo" className="w-10 h-10" />
+          <h1 className="text-2xl font-bold text-blue-600">
             Inkwell<span className="text-green-500">AI</span>
           </h1>
+        </div>
           <nav className="hidden md:block">
             <ul className="flex space-x-8">
               <li>
                 <a href="#features" className="text-gray-700 hover:text-blue-600">
                   Features
+                </a>
+              </li>
+              <li>
+                <a href="#feedback-examples" className="text-gray-700 hover:text-blue-600">
+                  Feedback Examples
                 </a>
               </li>
               <li>
@@ -60,10 +68,14 @@ export default function LandingPage({ signIn }) {
                   Blog
                 </a>
               </li>
-             
               <li>
                 <a href="/subscribe" className="text-gray-700 hover:text-blue-600">
                   Pricing
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={() => signIn('google', { callbackUrl: '/dashboard' })} className="text-gray-700 hover:text-white-600  bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full shadow-md">
+                  Get Started
                 </a>
               </li>
             </ul>
@@ -91,6 +103,11 @@ export default function LandingPage({ signIn }) {
                 </a>
               </li>
               <li>
+                <a href="#feedback-examples" className="text-gray-700 hover:text-blue-600">
+                  Feedback Examples
+                </a>
+              </li>
+              <li>
                 <a href="#testimonials" className="text-gray-700 hover:text-blue-600">
                   Testimonials
                 </a>
@@ -100,6 +117,12 @@ export default function LandingPage({ signIn }) {
                   Pricing
                 </a>
               </li>
+              <li>
+                <a href="#" onClick={() => signIn('google', { callbackUrl: '/dashboard' })} className="text-gray-700 hover:text-blue-600">
+                  Get Started
+                </a>
+              </li>
+ 
             </ul>
           </nav>
         )}
@@ -175,7 +198,105 @@ export default function LandingPage({ signIn }) {
           </div>
         </section>
 
-        {/* Testimonials Section */}
+        {/* Feedback Examples Section */}
+        <section id="feedback-examples" className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <h3 className="text-4xl font-bold text-center mb-12">See Examples of Our Feedback</h3>
+            <div className="flex flex-wrap -mx-4">
+              {/* Example 1: Code Bug */}
+              <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8 md:mb-0">
+                <div className="bg-gray-100 p-6 rounded-lg shadow-lg text-center">
+                  <img
+                    src="/images/feedback-code-bug.png" // Replace with your actual image path
+                    alt="Code Bug Feedback Example"
+                    className="mx-auto mb-4 object-contain drop-shadow-xl rounded-xl"
+                  />
+                  <h4 className="text-xl font-semibold mb-2">Potential Code Bug</h4>
+                  <p className="text-gray-700">
+                    InkwellAI will double check your code snippets to make sure you haven't missed any bugs or syntax errors. 
+                  </p>
+                </div>
+              </div>
+              {/* Example 2: Missing CTA */}
+              <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8 md:mb-0">
+                <div className="bg-gray-100 p-6 rounded-lg shadow-lg text-center">
+                  <img
+                    src="/images/feedback-missing-cta.png" // Replace with your actual image path
+                    alt="Missing CTA Feedback Example"
+                    className="mx-auto mb-4 object-contain drop-shadow-xl rounded-xl"
+                  />
+                  <h4 className="text-xl font-semibold mb-2">Missing Call-to-Action</h4>
+                  <p className="text-gray-700">
+                    Every article is written for a reason, our AI editor will make sure you cover that reason through a CTA (Call-to-Action) in your article.
+                  </p>
+                </div>
+              </div>
+              {/* Example 3: Passive Voice */}
+              <div className="w-full md:w-1/2 lg:w-1/4 px-4 mb-8 md:mb-0">
+                <div className="bg-gray-100 p-6 rounded-lg shadow-lg text-center">
+                  <img
+                    src="/images/feedback-passive-voice.png" // Replace with your actual image path
+                    alt="Passive Voice Feedback Example"
+                    className="mx-auto mb-4 object-contain drop-shadow-xl rounded-xl"
+                  />
+                  <h4 className="text-xl font-semibold mb-2">Use of Passive Voice</h4>
+                  <p className="text-gray-700">
+                    Checking the way you communicate concepts and ideas is just as important as making sure your 
+                    code snippets don't have issues. Our AI editor will double check your writing to make sure you're expressing
+                    yourself in a way that connects with others.
+                  </p>
+                </div>
+              </div>
+              {/* Example 4: Bland Title */}
+              <div className="w-full md:w-1/3 lg:w-1/4 px-4">
+                <div className="bg-gray-100 p-6 rounded-lg shadow-lg text-center">
+                  <img
+                    src="/images/feedback-bland-title.png" // Replace with your actual image path
+                    alt="Bland Title Feedback Example"
+                    className="mx-auto mb-4 object-contain drop-shadow-xl rounded-xl"
+                  />
+                  <h4 className="text-xl font-semibold mb-2">Title Too Bland</h4>
+                  <p className="text-gray-700">
+                    Because the title of your article is just as important as the rest of the content, our AI editor will pay special
+                    attention to it. Suggesting improvements to make sure your title is engaging and informative.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Try it for yourself Section */}
+        <section className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-20">
+          <div className="container mx-auto px-4 text-center">
+            <h3 className="text-4xl font-bold mb-6">Try It For Yourself</h3>
+            <p className="text-xl mb-8 max-w-xl mx-auto">
+              Experience InkwellAI's technical feedback for free. Paste your content into our editor and see how you can improve instantly.
+            </p>
+            {reviewAttempted && <ProAd />}
+             {/* Main Content */}
+             <EditorComponent 
+             settings={{
+                title: 'Try It For Yourself',
+                showButtonBar: false,
+                getFeedbackEnabled: !reviewAttempted
+             }}
+             onGetFeedback={onGetFeedback}
+             setFeedback={setFeedback}
+                genre="technical"
+                type="article"
+             />
+             <br/>
+            <button
+              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+              className="inline-flex items-center px-6 py-3 bg-white text-green-500 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
+            >
+              <FaGoogle className="mr-2" /> Sign-up now
+            </button>
+          </div>
+        </section>
+      </main>
+ {/* Testimonials Section */}
         <section id="testimonials" className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <h3 className="text-3xl font-bold text-center mb-12">What Our Users Are Saying</h3>
@@ -234,38 +355,6 @@ export default function LandingPage({ signIn }) {
             </div>
           </div>
         </section>
-
-        {/* Try it for yourself Section */}
-        <section className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-20">
-          <div className="container mx-auto px-4 text-center">
-            <h3 className="text-4xl font-bold mb-6">Try It For Yourself</h3>
-            <p className="text-xl mb-8 max-w-xl mx-auto">
-              Experience InkwellAI's technical feedback for free. Paste your content into our editor and see how you can improve instantly.
-            </p>
-            {reviewAttempted && <ProAd />}
-             {/* Main Content */}
-             <EditorComponent 
-             settings={{
-                title: 'Try It For Yourself',
-                showButtonBar: false,
-                getFeedbackEnabled: !reviewAttempted
-             }}
-             onGetFeedback={onGetFeedback}
-             setFeedback={setFeedback}
-                genre="techincal"
-                type="article"
-             />
-             <br/>
-            <button
-              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-              className="inline-flex items-center px-6 py-3 bg-white text-green-500 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
-            >
-              <FaGoogle className="mr-2" /> Sign-up now
-            </button>
-          </div>
-        </section>
-      </main>
-
       {/* Footer */}
       <footer className="bg-gray-800 text-gray-300 py-6">
         <div className="container mx-auto px-4 text-center">
