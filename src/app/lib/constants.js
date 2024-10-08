@@ -15,4 +15,4 @@ export const STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/te
 
 export const WEBSITE_TITLE="InkWellAI: Your AI Editing Assistant for Technical Articles"
 export const WEBSITE_DESCRIPTION=""
-export const WEBSITE_URL="https://www.inkwellai.com"
+export const WEBSITE_URL="https://www.inkwellai.net"
