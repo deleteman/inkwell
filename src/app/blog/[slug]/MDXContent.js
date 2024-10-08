@@ -5,6 +5,6 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 
 export default function MDXContent({ source, articles}) {
   return <MDXRemote {...source} 
-            components={{}}
+            components={{RelatedArticles: RelatedArticles(articles)}}
           />;
 }

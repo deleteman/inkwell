@@ -1,31 +1,28 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from './RelatedArticles.module.css'; // Add CSS for styling
 
 let articles = null;
-const RelatedArticles = ({ currentTags }) => {
-  const filteredArticles = articles.filter(
-    (art) =>
-      art.frontMatter.tags &&
-      art.frontMatter.tags.some((tag) => currentTags.includes(tag)) &&
-      !currentTags.every((tag) => art.frontMatter.tags.includes(tag))
-  );
-
-  if (filteredArticles.length === 0) {
+const RelatedArticles = () => {
+  if (articles.length === 0) {
     return <p>No related articles available.</p>;
   }
 
   return (
     <div className={styles.relatedComparisonsContainer}>
-      <h2>Keep reading...</h2>
-      <ul className={styles.comparisonsGrid}>
-        {filteredArticles.map((art) => (
-          <li key={art._id}>
-            <Link href={`/blog/${art.slug}`}>
-              <a>{art.frontMatter.title}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h2>You might also enjoy...</h2>
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-4`}>
+        {articles
+          .slice(0, 2)
+          .map((art) => (
+            <div key={art._id} className={styles.comparisonBox}>
+              <Link href={`/blog/${art.slug}`}>
+                <img src={art.header_image_url} alt={art.title} className={styles.thumbnail} />
+                <h3 className={styles.comparisonTitle}>{art.title}</h3>
+              </Link>
+            </div>
+          ))}
+      </div>
     </div>
   );
 };

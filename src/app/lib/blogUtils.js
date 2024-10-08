@@ -26,6 +26,33 @@ export async function getArticleFrontMatter(slug) {
     return data;
   }
 
+export async function getBlogSlugsByTags(tags, except = null) {
+    const slugs = getAllBlogSlugs();
+    
+    console.log("Except: ", except)
+    let articles = await Promise.all(
+      slugs.filter(slug => slug !== except).map(async (slug) => {
+        const data = await getArticleFrontMatter(slug);
+        return {
+          slug,
+          ...data,
+        };
+      })
+    );
+    articles = articles.filter(article => article.tags.some(tag => tags.includes(tag)))
+    
+    // Sort articles by date in descending order (newest first)
+    // Randomize the order of the list
+    for (let i = articles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = articles[i];
+      articles[i] = articles[j];
+      articles[j] = temp;
+    }
+    
+    return articles;
+  }
+
 /**
  * Retrieves front matter for all blog posts
  */
@@ -75,6 +102,6 @@ export async function getArticleContent(slug) {
       },
       scope: data,
     });
-  
+ 
     return { mdxSource, ...data };
   }
