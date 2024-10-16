@@ -21,8 +21,94 @@ export const exportToMarkdown = (editor, toast) => {
     toast('Content copied to clipboard as Markdown')
   }
 
+  // Assuming this is in a utility file or component
 
-export const getFeedback = async (editor, title, genre, type, additionalContext, setFeedback, toast, styles, doneCB = null) => {
+export const getFeedback = async (
+  editor,
+  title,
+  genre,
+  type,
+  additionalContext,
+  setFeedback,
+  toast,
+  styles,
+  doneCB = null
+) => {
+  const content = editor.getText();
+  const feedbackTypes = ['title', 'text', 'codeCheck'];
+
+  toast.loading('Fetching feedback...');
+
+  try {
+    // Prepare fetch requests for each feedback type
+    const fetchPromises = feedbackTypes.map((feedbackType) =>
+      fetch(`/api/feedback/${feedbackType}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content, genre, type, additionalContext }),
+      }).then((res) => res.json())
+    );
+
+    // Execute all fetch requests concurrently
+    const results = await Promise.all(fetchPromises);
+
+    if (typeof doneCB === 'function') {
+      doneCB();
+    }
+
+    toast.dismiss();
+
+    // Handle errors
+    const errors = results.filter((result) => result.error);
+    if (errors.length > 0) {
+      console.error('Some feedback requests failed:', errors);
+      toast.error('Some feedback requests failed. Please try again.');
+      // Optionally, you can proceed with the successful feedbacks
+    }
+
+    // Aggregate feedback from successful responses
+    const aggregatedFeedback = results.reduce((acc, result) => {
+      if (result.feedback && Array.isArray(result.feedback)) {
+        acc.push(...result.feedback);
+      }
+      return acc;
+    }, []);
+
+    if (aggregatedFeedback.length === 0) {
+      toast('No feedback at the moment.');
+      return;
+    }
+
+    console.log('Total feedback elements:', aggregatedFeedback.length);
+
+    // Process and sort feedback
+    const sortedFeedback = aggregatedFeedback
+      .map((feedbackItem) => {
+        if (generalFeedbackCategories.includes(feedbackItem.category)) {
+          feedbackItem.originalTextPosition = { start: -1 };
+        }
+        return feedbackItem;
+      })
+      .sort((a, b) => {
+        const posA = a.originalTextPosition?.start ?? 0;
+        const posB = b.originalTextPosition?.start ?? 0;
+        return posA - posB;
+      });
+
+    setFeedback(sortedFeedback);
+    // Optionally, re-enable highlighting or other UI features
+    // highlightText(sortedFeedback, editor, styles);
+
+    toast.success('Feedback updated!');
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    toast.dismiss();
+    toast.error('An error occurred while fetching feedback.');
+  }
+};
+
+
+export const getFeedbackOLD = async (editor, title, genre, type, additionalContext, setFeedback, toast, styles, doneCB = null) => {
     const content = editor.getText()
     toast.loading('Fetching feedback...')
     const res = await fetch("/api/feedback", {
