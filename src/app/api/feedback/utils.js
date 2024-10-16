@@ -20,9 +20,9 @@ export async function handleFeedbackRequest(req, res, feedbackFunction) {
 
   let pendingGenerations = await getPendingGenerations(session.user);
   if (pendingGenerations <= 0 && session.user.role === LIMITED_PRO_ROLE) {
-    return new Response({ error: `You have reached the maximum number of pending feedback requests. Please get more 
+    return new Response(JSON.stringify({ error: `You have reached the maximum number of pending feedback requests. Please get more 
                                 generations or upgrade your plan.`,
-                        }, { status: 403, headers: { 'Content-Type': 'application/json' } });
+                        }), { status: 403, headers: { 'Content-Type': 'application/json' } });
   }
 
   try {
