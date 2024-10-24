@@ -3,7 +3,9 @@ import  { normalizeString, escapeRegExp } from "../lib/editor-helpers"
 import { getSystemPrompt, getSystemPromptForCodeChecks, getSystemPromptForTitle } from "./prompting"
 
 
-const openai = new OpenAI()
+const openai = new OpenAI({
+  baseURL: 'http://localhost:1234/v1/',
+})
 
 const LLM_SEED = Math.round(Math.random() * 100000)// LLM_SEED
 const LLM_MODEL = "gpt-4o-mini"
@@ -46,6 +48,7 @@ export async function getCodeCheckFeedback(content, title, genre, type, addition
             temperature: LLM_TEMPERATURE 
         });
 
+        console.log(completion)
         const feedback = completion.choices[0].message?.content;
         console.log("Completion Choices:", completion.choices);
         
@@ -66,6 +69,9 @@ export async function getCodeCheckFeedback(content, title, genre, type, addition
             const normalizedOriginalText = normalizeString(feedbackItem.originalText);
             feedbackItem.originalText = normalizedOriginalText;
 
+            if(!feedbackItem.originalTextPosition) {
+                feedbackItem.originalTextPosition = { start: 0, end: feedbackItem.originalText.length };
+            }
             console.log("Prior start:", feedbackItem.originalTextPosition.start);
 
             // Create a flexible regex pattern that ignores whitespace differences
@@ -176,6 +182,9 @@ export async function getTextFeedback(content, title, genre, type, additionalCon
     parsedFeedback = parsedFeedback.map((feedback) => {
       if(feedback.error) return feedback
       feedback.originalText = normalizeString(feedback.originalText)
+      if(!feedbackItem.originalTextPosition) {
+          feedbackItem.originalTextPosition = { start: 0, end: feedbackItem.originalText.length };
+      }
       console.log("Prior start: ", feedback.originalTextPosition.start)
       let escapedText = escapeRegExp(feedback.originalText)
       let r = new RegExp(escapedText, 'igm')

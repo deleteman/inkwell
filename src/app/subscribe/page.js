@@ -1,7 +1,9 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]/route'
 import Link from 'next/link'
+import PricingTable from '../components/PricingTable'
 import { FiCheckCircle } from 'react-icons/fi'
+import { PRICING_TABLE } from '../lib/constants'
 
 export default async function Subscribe() {
   // Get the session on the server side
@@ -67,13 +69,8 @@ export default async function Subscribe() {
             </ul>
           </div>
 
-          {/* Pricing Information */}
-            <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-            <stripe-pricing-table
-              pricing-table-id="prctbl_1Q68CULFm9hjuSSjEL5CzZwx"
-              publishable-key="pk_test_51Q0KMyLFm9hjuSSjvLrYAtcS9mgaLtCkVGDcZCsR05GxRvp9HLzjxnu1CuLMZgfnfnOrD3j2D6wKWFxgUYxBnX5H00ShSzIk6t"
-              customer-email={session?.user?.email}
-            ></stripe-pricing-table>
+          {/* Custom Pricing Table */}
+          <PricingTable pricing={PRICING_TABLE} user_email={session?.user?.email}/>
         </div>
       </main>
 

@@ -118,6 +118,12 @@ export default function LandingPage({ signIn }) {
                 </a>
               </li>
               <li>
+                <a href="/blog" className="text-gray-700 hover:text-blue-600">
+                  Blog
+                </a>
+              </li>
+ 
+              <li>
                 <a href="#" onClick={() => signIn('google', { callbackUrl: '/dashboard' })} className="text-gray-700 hover:text-blue-600">
                   Get Started
                 </a>
